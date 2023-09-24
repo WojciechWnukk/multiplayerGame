@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const websocketHandler = require('./websocket'); // Import obsługi WebSockets
+const entityRoutes = require('./routes/entities');
 
 
 app.use(express.json());
@@ -35,6 +36,8 @@ server.listen(PORT, () => {
 
 //routes
 app.use('/api/users', userRoutes);
+
+app.use('/api/entities', entityRoutes);
 
 
 

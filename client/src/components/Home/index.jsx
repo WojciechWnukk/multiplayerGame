@@ -12,6 +12,8 @@ const Home = ({ }) => {
   const playerId = localStorage.getItem('playerId');
   const [socket, setSocket] = useState(null); // Stan socketa
   const [entities, setEntities] = useState([]);
+  const [previousPlayerPosition, setPreviousPlayerPosition] = useState({});
+
   useEffect(() => {
     if (!socket) {
       // Otwórz początkowe połączenie WebSocket
@@ -45,8 +47,8 @@ const Home = ({ }) => {
 
   const movePlayer = async (playerId, x, y) => {
     try {
-      const checkedX = x < 0 ? 0 : x > 800 ? 800 : x;
-      const checkedY = y < 0 ? 0 : y > 600 ? 600 : y;
+      const checkedX = x < 0 ? 0 : x > 1160 ? 1160 : x;
+      const checkedY = y < 0 ? 0 : y > 760 ? 760 : y;
       const url = `${process.env.REACT_APP_DEV_SERVER}/api/users/${playerId}`;
       const response = await axios.put(url, {
         x: checkedX,
@@ -77,6 +79,8 @@ const Home = ({ }) => {
         case 'w':
           if (!isMoving) {
             setIsMoving(true);
+            if (playerPosition.y <= 0) break;
+            setPreviousPlayerPosition(playerPosition);
             setPlayerPosition((prevPos) => ({ ...prevPos, y: prevPos.y - speed }));
             movePlayer(playerId, playerPosition.x, playerPosition.y - speed);
           }
@@ -85,6 +89,8 @@ const Home = ({ }) => {
         case 's':
           if (!isMoving) {
             setIsMoving(true);
+            if (playerPosition.y >= 760) break;
+            setPreviousPlayerPosition(playerPosition);
             setPlayerPosition((prevPos) => ({ ...prevPos, y: prevPos.y + speed }));
             movePlayer(playerId, playerPosition.x, playerPosition.y + speed);
           }
@@ -93,6 +99,8 @@ const Home = ({ }) => {
         case 'a':
           if (!isMoving) {
             setIsMoving(true);
+            if (playerPosition.x <= 0) break;
+            setPreviousPlayerPosition(playerPosition);
             setPlayerPosition((prevPos) => ({ ...prevPos, x: prevPos.x - speed }));
             movePlayer(playerId, playerPosition.x - speed, playerPosition.y);
           }
@@ -101,6 +109,8 @@ const Home = ({ }) => {
         case 'd':
           if (!isMoving) {
             setIsMoving(true);
+            if (playerPosition.x >= 1160) break;
+            setPreviousPlayerPosition(playerPosition);
             setPlayerPosition((prevPos) => ({ ...prevPos, x: prevPos.x + speed }));
             movePlayer(playerId, playerPosition.x + speed, playerPosition.y);
           }
@@ -108,9 +118,11 @@ const Home = ({ }) => {
         default:
           break;
       }
+
       setTimeout(() => {
         setIsMoving(false);
       }, 500); // Tutaj możesz dostosować czas opóźnienia
+
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -122,6 +134,7 @@ const Home = ({ }) => {
   useEffect(() => {
     if (playerPosition.x === undefined || playerPosition.y === undefined) return;
     movePlayer(playerId, playerPosition.x, playerPosition.y);
+    checkEntityCollision();
   }, [playerId, playerPosition]);
 
   useEffect(() => {
@@ -149,6 +162,7 @@ const Home = ({ }) => {
       );
     });
   }, [socket]);
+
   useEffect(() => {
     // Nasłuchuj na zdarzenie refreshPlayers i aktualizuj listę graczy
     if (socket) {
@@ -156,22 +170,78 @@ const Home = ({ }) => {
         setPlayers(newPlayers);
       });
     }
-
-    // ... reszta kodu
   }, [socket]);
 
+  const getEntities = async () => {
+    try {
+      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities`;
+      const response = await axios.get(url);
+      const entities = response.data.data;
+      console.log('Entities', entities)
+      setEntities(entities);
+    } catch (error) {
+      console.log('Error fetching entities', error);
+    }
+  };
+
+  const setEntityXY = async () => {
+    //getEntities();
+    // Generowanie pozycji dla encji po pobraniu graczy
+    for (const currentEntity of entities) {
+      if (currentEntity.alive === false) {
+        console.log("Enitity is alive")
+        const gridSize = 40
+        const x = Math.floor(Math.random() * (1200 / gridSize)) * gridSize;
+        const y = Math.floor(Math.random() * (800 / gridSize)) * gridSize;
+        try {
+          const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity._id}`;
+          const response = await axios.put(url, {
+            x: x,
+            y: y,
+            alive: true,
+          });
+          const entity = response.data.data;
+          console.log(entity);
+        } catch (error) {
+          console.log('Error fetching entities', error);
+        }
+      }
+    }
+  }
+
+  const checkEntityCollision = async () => {
+    for (const currentEntity of entities) {
+      if (currentEntity.alive === false) continue;
+      console.log(playerPosition.x, currentEntity.x, playerPosition.y, currentEntity.y)
+      if (
+        playerPosition.x === currentEntity.x &&
+        playerPosition.y === currentEntity.y &&
+        (previousPlayerPosition.x !== currentEntity.x ||
+          previousPlayerPosition.y !== currentEntity.y)) {
+        console.log("Collision")
+        try {
+          const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity._id}`;
+          await axios.put(url, {
+            x: `-1`,
+            y: `-1`,
+            alive: false,
+          })
+          console.log("Entity killed")
+          getEntities();
+
+        } catch (error) {
+          console.log('Error fetching entities', error);
+        }
+
+      }
+    }
+  }
 
   useEffect(() => {
-    // Generowanie pozycji dla encji po pobraniu graczy
-    const entityPositions = [];
-    const gridSize = 40
-    for (let i = 0; i < 1; i++) { // Generuj 10 encji (możesz dostosować ilość)
-      const x = Math.floor(Math.random() * (800 / gridSize)) * gridSize; // 800 to szerokość mapy
-      const y = Math.floor(Math.random() * (600 / gridSize)) * gridSize; // 600 to wysokość mapy
-      entityPositions.push({ x, y });
-    }
-    setEntities(entityPositions);
+    getEntities();
+    setEntityXY()
   }, []);
+
 
 
   return (
@@ -197,7 +267,7 @@ const Home = ({ }) => {
         {entities.map((entity, index) => (
           <div
             key={`entity-${index}`}
-            className={styles.entity}
+            className={entity.alive === true ? styles.entity : styles.entity_disabled}
             style={{
               transform: `translate(${entity.x}px, ${entity.y}px)`,
             }}

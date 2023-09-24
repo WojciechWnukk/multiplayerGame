@@ -113,8 +113,8 @@ router.put("/:playerId", async (req, res) => {
   try {
       const { playerId } = req.params;
       const { x, y, online } = req.body;
-      console.log("x", x, "y", y, "online", online)
-      if (!playerId || !x || !y) {
+      console.log("playerId", playerId, "x", x, "y", y, "online", online)
+      if (!playerId || x < 0 || y < 0) {
           return res.status(400).send({ message: "Bad request" });
       }
 

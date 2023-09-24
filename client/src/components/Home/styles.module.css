@@ -199,3 +199,7 @@ h2 {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.entity:hover {
+    background-color: #c0392b;
+}
