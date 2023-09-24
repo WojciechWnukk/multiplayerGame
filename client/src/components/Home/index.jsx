@@ -10,6 +10,8 @@ const Home = ({ }) => {
   const [playerPosition, setPlayerPosition] = useState({});
   const [isMoving, setIsMoving] = useState(false);
   const playerId = localStorage.getItem('playerId');
+  const [actualLevel, setActualLevel] = useState(1);
+  const [actualPlayer, setActualPlayer] = useState({});
   const [socket, setSocket] = useState(null); // Stan socketa
   const [entities, setEntities] = useState([]);
   const [previousPlayerPosition, setPreviousPlayerPosition] = useState({});
@@ -39,6 +41,7 @@ const Home = ({ }) => {
       setPlayers(players);
       const player = players.find((player) => player._id === playerId);
       setPlayerPosition({ x: player.x, y: player.y });
+      setActualLevel(player.lvl);
       console.log('Gram na ', player);
     } catch (error) {
       console.log('Error fetching players', error);
@@ -68,6 +71,7 @@ const Home = ({ }) => {
 
   useEffect(() => {
     getPlayers();
+    setEntityXY()
   }, []);
 
   useEffect(() => {
@@ -161,6 +165,16 @@ const Home = ({ }) => {
         )
       );
     });
+
+    socket.on('killEntity', (refreshEntities) => {
+      console.log("Killing entity")
+      setEntities(refreshEntities ? refreshEntities : []);
+    })
+
+    socket.on('respawnEntity', (refreshEntities) => {
+      console.log("Respawning entity")
+      setEntities(refreshEntities ? refreshEntities : []);
+    })
   }, [socket]);
 
   useEffect(() => {
@@ -169,6 +183,13 @@ const Home = ({ }) => {
       socket.on('refreshPlayers', (newPlayers) => {
         setPlayers(newPlayers);
       });
+      socket.on('refreshEntities', (newEntities) => {
+        setEntities(newEntities);
+      });
+      socket.on('refreshLevel', (newLevel) => {
+        console.log("New level", newLevel)
+        setActualLevel(newLevel);
+      })
     }
   }, [socket]);
 
@@ -185,10 +206,9 @@ const Home = ({ }) => {
   };
 
   const setEntityXY = async () => {
-    //getEntities();
-    // Generowanie pozycji dla encji po pobraniu graczy
     for (const currentEntity of entities) {
-      if (currentEntity.alive === false) {
+      console.log("Current", currentEntity)
+      if (currentEntity.alive) {
         console.log("Enitity is alive")
         const gridSize = 40
         const x = Math.floor(Math.random() * (1200 / gridSize)) * gridSize;
@@ -210,36 +230,29 @@ const Home = ({ }) => {
   }
 
   const checkEntityCollision = async () => {
-    for (const currentEntity of entities) {
-      if (currentEntity.alive === false) continue;
-      console.log(playerPosition.x, currentEntity.x, playerPosition.y, currentEntity.y)
-      if (
-        playerPosition.x === currentEntity.x &&
-        playerPosition.y === currentEntity.y &&
-        (previousPlayerPosition.x !== currentEntity.x ||
-          previousPlayerPosition.y !== currentEntity.y)) {
-        console.log("Collision")
-        try {
-          const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity._id}`;
-          await axios.put(url, {
-            x: `-1`,
-            y: `-1`,
-            alive: false,
-          })
+    if (entities.length > 0) {
+      for (const currentEntity of entities) {
+        if (currentEntity.alive === false) continue;
+        console.log(playerPosition.x, currentEntity.x, playerPosition.y, currentEntity.y)
+        if (
+          playerPosition.x === currentEntity.x &&
+          playerPosition.y === currentEntity.y &&
+          (previousPlayerPosition.x !== currentEntity.x ||
+            previousPlayerPosition.y !== currentEntity.y)) {
+          //zabijanie przez websocket
+
           console.log("Entity killed")
-          getEntities();
-
-        } catch (error) {
-          console.log('Error fetching entities', error);
+          if (socket) {
+            socket.emit('killEntity', { entityId: currentEntity._id, playerId: playerId })
+          }
+          setEntityXY()
         }
-
       }
     }
   }
 
   useEffect(() => {
     getEntities();
-    setEntityXY()
   }, []);
 
 
@@ -248,7 +261,7 @@ const Home = ({ }) => {
     <div className={styles.container}>
       <div className={styles.baner}></div>
       <div className={styles.title}>
-        <h1>Home</h1>
+        <h1>Twój poziom: {actualLevel}</h1>
       </div>
       <div className={styles.map}>
         {players ? (
@@ -264,7 +277,7 @@ const Home = ({ }) => {
             ></div>
           ))
         ) : null}
-        {entities.map((entity, index) => (
+        {entities.length > 0 ? entities.map((entity, index) => (
           <div
             key={`entity-${index}`}
             className={entity.alive === true ? styles.entity : styles.entity_disabled}
@@ -272,7 +285,7 @@ const Home = ({ }) => {
               transform: `translate(${entity.x}px, ${entity.y}px)`,
             }}
           ></div>
-        ))}
+        )) : null}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 const socketIo = require('socket.io');
 const { User, validate } = require("./models/user")
+const { Entity } = require("./models/entity")
 
 module.exports = (server) => {
   const io = socketIo(server);
@@ -41,6 +42,24 @@ module.exports = (server) => {
       io.emit('updatePosition', data);
 
     });
+
+    socket.on('killEntity', async (data) => {
+      console.log('Zabicie potwora:', data);
+      try {
+        await Entity.findByIdAndUpdate(data.entityId, { alive: false });
+        const entities = await Entity.find({ alive: true }).exec();
+        
+        const user = await User.findById(data.playerId);
+        user.lvl += 1;
+        await user.save();
+
+        io.emit('refreshEntities', entities);
+        io.emit('refreshLevel', user.lvl);
+      } catch (err) {
+        console.error('Błąd podczas aktualizacji statusu online:', err);
+      }
+    }
+    );
 
 
   });
