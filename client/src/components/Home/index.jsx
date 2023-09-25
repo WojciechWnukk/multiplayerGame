@@ -274,6 +274,7 @@ const Home = ({ }) => {
                   }px)`,
                 transition: 'transform 0.1s ease-in-out', // Dodaj animację CSS
               }}
+              title={`Poziom gracza: ${player.lvl}`}
             ></div>
           ))
         ) : null}

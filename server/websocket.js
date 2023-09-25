@@ -3,8 +3,13 @@ const { User, validate } = require("./models/user")
 const { Entity } = require("./models/entity")
 
 module.exports = (server) => {
-  const io = socketIo(server);
-
+  //const io = socketIo(server);
+  const io = socketIo(server, {
+    cors: {
+      origin: "http://localhost:3000", // Domena Twojej aplikacji React
+      methods: ["GET", "POST"]
+    }
+  });
   io.on('connection', async (socket) => {
     const userId = socket.handshake.query.userId;
 
@@ -20,9 +25,19 @@ module.exports = (server) => {
     }
 
     socket.on('message', (data) => {
-      console.log('Otrzymano wiadomość od klienta:', data);
-      io.emit('message', data);
+      console.log('Otrzymano wiadomość:', data);
+      const message = JSON.parse(data)
+      // Tutaj możesz przetwarzać i przekazywać wiadomości do innych klientów
+      const connectedClients = io.of('/').sockets;
+      connectedClients.forEach((client) => {
+        if (client !== socket) {
+          console.log("Wysyłam do innych")
+          client.send(JSON.stringify(message));
+          io.emit('message', message);
+        }
+      });
     });
+    
 
     socket.on('disconnect', async () => {
       const playerId = socket.id

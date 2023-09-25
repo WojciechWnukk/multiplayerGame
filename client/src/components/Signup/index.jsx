@@ -7,6 +7,7 @@ const Signup = () => {
         nick: "",
         email: "",
         password: "",
+        lvl: 1,
         x: 0,
         y: 0,
         online: true
