@@ -24,18 +24,24 @@ module.exports = (server) => {
       console.error('Błąd podczas aktualizacji statusu online:', err);
     }
 
-    socket.on('message', (data) => {
+    socket.on('message', async (data) => {
       console.log('Otrzymano wiadomość:', data);
       const message = JSON.parse(data)
+
+      const userByNick = await User.findOne({ nick: message.author }).exec();
+      if(userByNick) {
+        const userId = userByNick._id.toString()
+      }
+      console.log(userId)
       // Tutaj możesz przetwarzać i przekazywać wiadomości do innych klientów
-      const connectedClients = io.of('/').sockets;
-      connectedClients.forEach((client) => {
-        if (client !== socket) {
+      //const connectedClients = io.of('/').sockets;
+      //connectedClients.forEach((client) => {
+        if (userId !== socket) {
           console.log("Wysyłam do innych")
-          client.send(JSON.stringify(message));
+          //client.send(JSON.stringify(message));
           io.emit('message', message);
         }
-      });
+      //});
     });
     
 

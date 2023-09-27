@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 import axios from 'axios';
 import io from 'socket.io-client';
-
+import Chat from '../Chat';
 
 
 const Home = ({ }) => {
@@ -42,6 +42,7 @@ const Home = ({ }) => {
       const player = players.find((player) => player._id === playerId);
       setPlayerPosition({ x: player.x, y: player.y });
       setActualLevel(player.lvl);
+      setActualPlayer(player);
       console.log('Gram na ', player);
     } catch (error) {
       console.log('Error fetching players', error);
@@ -142,7 +143,7 @@ const Home = ({ }) => {
   }, [playerId, playerPosition]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (socket){
 
     socket.on('connection', (refreshPlayers) => {
       setPlayers(refreshPlayers);
@@ -175,6 +176,7 @@ const Home = ({ }) => {
       console.log("Respawning entity")
       setEntities(refreshEntities ? refreshEntities : []);
     })
+  }
   }, [socket]);
 
   useEffect(() => {
@@ -260,8 +262,11 @@ const Home = ({ }) => {
   return (
     <div className={styles.container}>
       <div className={styles.baner}></div>
-      <div className={styles.title}>
+      {/*<div className={styles.title}>
         <h1>Twój poziom: {actualLevel}</h1>
+  </div>*/}
+            <div className={styles.chatContainer}>
+      {socket && actualPlayer.nick && <Chat socket={socket} actualPlayerNick={actualPlayer.nick} />}
       </div>
       <div className={styles.map}>
         {players ? (
@@ -288,6 +293,8 @@ const Home = ({ }) => {
           ></div>
         )) : null}
       </div>
+
+      
     </div>
   );
 };
