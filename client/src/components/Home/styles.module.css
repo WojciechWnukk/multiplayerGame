@@ -1,15 +1,19 @@
 .container {
     display: flex;
-    justify-content: flex-start; /* Zmiana na flex-start, aby elementy układały się od lewej strony */
-    align-items: flex-start; /* Zmiana na flex-start, aby elementy układały się od góry */
+    justify-content: flex-start;
+    /* Zmiana na flex-start, aby elementy układały się od lewej strony */
+    align-items: flex-start;
+    /* Zmiana na flex-start, aby elementy układały się od góry */
     margin-top: 20px;
-    width: 100%; /* Dodanie 100% szerokości, aby zajmować całą dostępną przestrzeń po lewej stronie mapy */
+    width: 100%;
+    /* Dodanie 100% szerokości, aby zajmować całą dostępną przestrzeń po lewej stronie mapy */
 }
 
 /* Aktualizacja stylu .map */
 .map {
     position: relative;
-    width: 80%; /* Zmiana szerokości mapy, aby zajmować 80% dostępnej przestrzeni */
+    width: 1820px;
+    /* Zmiana szerokości mapy, aby zajmować 80% dostępnej przestrzeni */
     height: 800px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
@@ -21,9 +25,10 @@
 }
 
 .chatContainer {
-    max-width: 400px;
+    max-width: 300px;
     height: 760px;
-    margin: 0 20px; /* Dodaj marginesy na lewo i prawo, aby oddzielić chat od mapy */
+    margin: 0 20px;
+    /* Dodaj marginesy na lewo i prawo, aby oddzielić chat od mapy */
     margin-top: 20px;
     padding: 20px;
     border: 1px solid #ccc;
@@ -217,4 +222,20 @@ h2 {
 
 .entity:hover {
     background-color: #c0392b;
+}
+
+.userPanelContainer {
+    max-width: 300px;
+    width: 20%;
+    height: 760px;
+    margin: 0 20px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }

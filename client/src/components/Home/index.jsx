@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Chat from '../Chat';
-
+import UserPanel from '../UserPanel';
 
 const Home = ({ }) => {
   const [players, setPlayers] = useState([]);
@@ -143,40 +143,40 @@ const Home = ({ }) => {
   }, [playerId, playerPosition]);
 
   useEffect(() => {
-    if (socket){
+    if (socket) {
 
-    socket.on('connection', (refreshPlayers) => {
-      setPlayers(refreshPlayers);
-      console.log('WebSocket connected');
-    });
+      socket.on('connection', (refreshPlayers) => {
+        setPlayers(refreshPlayers);
+        console.log('WebSocket connected');
+      });
 
-    socket.on('disconnect', (refreshPlayers) => {
-      console.log('WebSocket disconnected');
-      setPlayers(refreshPlayers)
-    });
+      socket.on('disconnect', (refreshPlayers) => {
+        console.log('WebSocket disconnected');
+        setPlayers(refreshPlayers)
+      });
 
-    socket.on('error', (error) => {
-      console.error('WebSocket error:', error);
-    });
+      socket.on('error', (error) => {
+        console.error('WebSocket error:', error);
+      });
 
-    socket.on('updatePosition', ({ playerId, x, y }) => {
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) =>
-          player._id === playerId ? { ...player, x, y } : player
-        )
-      );
-    });
+      socket.on('updatePosition', ({ playerId, x, y }) => {
+        setPlayers((prevPlayers) =>
+          prevPlayers.map((player) =>
+            player._id === playerId ? { ...player, x, y } : player
+          )
+        );
+      });
 
-    socket.on('killEntity', (refreshEntities) => {
-      console.log("Killing entity")
-      setEntities(refreshEntities ? refreshEntities : []);
-    })
+      socket.on('killEntity', (refreshEntities) => {
+        console.log("Killing entity")
+        setEntities(refreshEntities ? refreshEntities : []);
+      })
 
-    socket.on('respawnEntity', (refreshEntities) => {
-      console.log("Respawning entity")
-      setEntities(refreshEntities ? refreshEntities : []);
-    })
-  }
+      socket.on('respawnEntity', (refreshEntities) => {
+        console.log("Respawning entity")
+        setEntities(refreshEntities ? refreshEntities : []);
+      })
+    }
   }, [socket]);
 
   useEffect(() => {
@@ -265,8 +265,8 @@ const Home = ({ }) => {
       {/*<div className={styles.title}>
         <h1>Twój poziom: {actualLevel}</h1>
   </div>*/}
-            <div className={styles.chatContainer}>
-      {socket && actualPlayer.nick && <Chat socket={socket} actualPlayerNick={actualPlayer.nick} />}
+      <div className={styles.chatContainer}>
+        {socket && actualPlayer.nick && <Chat socket={socket} actualPlayerNick={actualPlayer.nick} />}
       </div>
       <div className={styles.map}>
         {players ? (
@@ -293,8 +293,11 @@ const Home = ({ }) => {
           ></div>
         )) : null}
       </div>
+      <div className={styles.userPanelContainer}>
+        {socket && actualPlayer.nick && <UserPanel socket={socket} actualPlayerNick={actualPlayer.nick} actualLevel={actualLevel} />}
+      </div>
 
-      
+
     </div>
   );
 };
