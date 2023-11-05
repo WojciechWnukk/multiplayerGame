@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import axios from 'axios';
 import styles from './styles.module.css';
 const Chat = ({ socket, actualPlayerNick }) => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
-    const playerId = localStorage.getItem('playerId');
     const [lastMessage, setLastMessage] = useState(null);
+    //const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
         const handleMessage = (message) => {
