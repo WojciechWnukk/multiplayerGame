@@ -23,6 +23,9 @@ public class authController {
         Optional<User> existingUser = userService.getAllUsers().stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
                 .findFirst();
+        if(userService.loginValidation(user.getEmail(), user.getPassword()) == false){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
+        }
 
         if (!existingUser.isPresent()) {
             System.out.println("User with this nick didn't exists");
@@ -38,3 +41,4 @@ public class authController {
 
     }
 }
+

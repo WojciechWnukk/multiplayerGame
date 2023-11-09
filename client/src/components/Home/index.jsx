@@ -19,7 +19,7 @@ const Home = ({ }) => {
   useEffect(() => {
     if (!socket) {
       // Otwórz początkowe połączenie WebSocket
-      const newSocket = io('http://localhost:5000', {
+      const newSocket = io(/*'http://localhost:5000'*/'/ws', {
         transports: ['websocket'],
         query: {
           userId: playerId,
