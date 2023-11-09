@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./styles.module.css"
@@ -24,9 +24,10 @@ const Signup = () => {
         try {
             const url = `${process.env.REACT_APP_DEV_SERVER}/api/users`
             const { data: res } = await axios.post(url, data)
-            localStorage.setItem("playerId", res.data._id)
-            //navigate("/login")
-            console.log(res.message)
+            console.log("tutaj wchodzi", res)
+            localStorage.setItem("playerId", res) //nie wiem jak wysyłać dane z backendu do frontendu jako całość
+            navigate("/login")
+            console.log("res" + res.message)
 
         } catch (error) {
             if (
@@ -38,6 +39,7 @@ const Signup = () => {
             }
         }
     }
+
 /*
     const newPlayer = () => {
         axios.post('http://localhost:8080/api/players', {
