@@ -53,7 +53,6 @@
     /* Tutaj po przecinku definiujemy obie animacje */
     border: 2px solid #000;
     border-radius: 50%;
-    background-image: url(https://micc.garmory-cdn.cloud/obrazki/postacie/paid/heros-ksiaz-m.gif);
 }
 
 .player:hover {
@@ -214,7 +213,7 @@ h2 {
     /* Kolor kwadratu */
 
     /* Dodaj background-image dla tej klasy */
-    background-image: url(https://micc.garmory-cdn.cloud/obrazki/npc/tyt/ice_king.gif);
+    /*background-image: url(https://micc.garmory-cdn.cloud/obrazki/npc/tyt/ice_king.gif);*/
     background-size: 90px 140px;
     background-repeat: no-repeat;
     background-position: center;
