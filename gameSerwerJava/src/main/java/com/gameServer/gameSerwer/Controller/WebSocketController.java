@@ -1,59 +1,46 @@
 package com.gameServer.gameSerwer.Controller;
 
-import com.gameServer.gameSerwer.Model.User;
-import com.gameServer.gameSerwer.WebSocket.IncomingMessage;
-import com.gameServer.gameSerwer.WebSocket.OutgoingMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gameServer.gameSerwer.Model.Message;
+import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Controller
-@CrossOrigin
 public class WebSocketController {
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
-    private final SimpMessagingTemplate messagingTemplate;
 
-    public WebSocketController(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+
+    @MessageMapping("/connection")
+    @SendTo("/topic/connection")
+    public ResponseEntity<?> connection(@Payload Message payload) {
+        Map<String, String> message = new HashMap<>();
+        message.put("content", "Połączono z WebSocketem");
+
+        System.out.println(payload.toString());
+        //messagingTemplate.convertAndSend("/topic/connection", message);
+        return ResponseEntity.status(200).body("Połączono z WebSocketem - serwer");
     }
 
 
-    @MessageMapping("/process-message")
-    @SendTo("/topic/messages")
-    public OutgoingMessage processMessage(IncomingMessage incomingMessage) throws Exception {
-        Thread.sleep(1000);
-        System.out.println("dadadsa");
-
-        return new OutgoingMessage("Hello, " + incomingMessage.getName());
-    }
-
-    @MessageMapping("/updatePosition")
-    @SendTo("/topic/players")
-    public User updatePosition(User user) throws Exception {
-        Thread.sleep(1000);
-        System.out.println("dadadsa");
-        return user;
-    }
-
-    @MessageMapping("/killEntity")
-    @SendTo("/topic/killEntity")
-    public String killEntity(String id) throws Exception {
-        Thread.sleep(1000);
-        System.out.println("dadadsa");
-
-        return id;
-    }
-
-    @MessageMapping("/{playerId}")
-    @SendTo("/topic/players")
-    public User movePlayer (String playerId, User user) throws Exception {
-        Thread.sleep(1000);
-        System.out.println("dadadsa");
-
-        return user;
-    }
 
 }
+

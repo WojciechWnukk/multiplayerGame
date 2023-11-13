@@ -1,37 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.module.css';
 import axios from 'axios';
-import io from 'socket.io-client';
 import Chat from '../Chat';
 import UserPanel from '../UserPanel';
+import {over} from 'stompjs';
+import SockJS from 'sockjs-client';
 
-const Home = ({ }) => {
+var stompClient = null;
+const Home = () => {
   const [players, setPlayers] = useState([]);
   const [playerPosition, setPlayerPosition] = useState({});
   const [isMoving, setIsMoving] = useState(false);
   const playerId = localStorage.getItem('playerId');
   const [actualLevel, setActualLevel] = useState(1);
   const [actualPlayer, setActualPlayer] = useState({});
-  const [socket, setSocket] = useState(null); // Stan socketa
   const [entities, setEntities] = useState([]);
   const [previousPlayerPosition, setPreviousPlayerPosition] = useState({});
+  const [socketData, setSocketData] = useState({
+    message: 'Elo'
+  });
+  const [socket, setSocket] = useState(null);
 
+  useEffect (() => {
+    console.log("Socket data", socketData)
+  }, [socketData])
+
+  const connect = () => {
+    let socket = new SockJS('http://localhost:8080/ws');
+    stompClient = over(socket);
+    setSocket(socket);
+    stompClient.connect({}, onConnected, onError);
+  }
+
+  const onConnected = () => {
+    setSocketData({...socketData, "connected": true})
+    stompClient.subscribe('/topic/connection', onMessageReceived);
+  }
+
+  const onError = (err) => {
+    console.log(err);
+    
+}
+
+  const onMessageReceived = (payload) => {
+  }
+
+  const sendMessage = () => {
+    
+      console.log(socketData)
+      stompClient.send('/app/connection', {}, JSON.stringify(socketData));
+    
+  }
+  
   useEffect(() => {
-    if (!socket) {
-      // Otwórz początkowe połączenie WebSocket
-      const newSocket = io(/*'http://localhost:5000'*/'/ws', {
-        transports: ['websocket'],
-        query: {
-          userId: playerId,
-        },
-      });
-      setSocket(newSocket);
-    }
-
-    return () => {
-      // Nie zamykaj połączenia WebSocket przy odmontowywaniu komponentu
-    };
-  }, [socket, playerId]);
+    connect()
+  }, [])
 
   const getPlayers = async () => {
     try {
@@ -60,11 +83,10 @@ const Home = ({ }) => {
       });
       const player = response.data.data;
       console.log(player);
+      sendMessage()
 
-      if (socket) {
-        // Wyślij aktualizację pozycji na sockecie
-        socket.emit('updatePosition', { playerId, x: checkedX, y: checkedY });
-      }
+      //websocket
+      
     } catch (error) {
       console.log('Error fetching players', error);
     }
@@ -73,6 +95,7 @@ const Home = ({ }) => {
   useEffect(() => {
     getPlayers();
     setEntityXY()
+    
   }, []);
 
   useEffect(() => {
@@ -142,59 +165,6 @@ const Home = ({ }) => {
     checkEntityCollision();
   }, [playerId, playerPosition]);
 
-  useEffect(() => {
-    if (socket) {
-
-      socket.on('connection', (refreshPlayers) => {
-        setPlayers(refreshPlayers);
-        console.log('WebSocket connected');
-      });
-
-      socket.on('disconnect', (refreshPlayers) => {
-        console.log('WebSocket disconnected');
-        setPlayers(refreshPlayers)
-      });
-
-      socket.on('error', (error) => {
-        console.error('WebSocket error:', error);
-      });
-
-      socket.on('updatePosition', ({ playerId, x, y }) => {
-        setPlayers((prevPlayers) =>
-          prevPlayers.map((player) =>
-            player._id === playerId ? { ...player, x, y } : player
-          )
-        );
-      });
-
-      socket.on('killEntity', (refreshEntities) => {
-        console.log("Killing entity")
-        setEntities(refreshEntities ? refreshEntities : []);
-      })
-
-      socket.on('respawnEntity', (refreshEntities) => {
-        console.log("Respawning entity")
-        setEntities(refreshEntities ? refreshEntities : []);
-      })
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    // Nasłuchuj na zdarzenie refreshPlayers i aktualizuj listę graczy
-    if (socket) {
-      socket.on('refreshPlayers', (newPlayers) => {
-        setPlayers(newPlayers);
-      });
-      socket.on('refreshEntities', (newEntities) => {
-        setEntities(newEntities);
-      });
-      socket.on('refreshLevel', (newLevel) => {
-        console.log("New level", newLevel)
-        setActualLevel(newLevel);
-      })
-    }
-  }, [socket]);
-
   const getEntities = async () => {
     try {
       const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities`;
@@ -244,9 +214,9 @@ const Home = ({ }) => {
           //zabijanie przez websocket
 
           console.log("Entity killed")
-          if (socket) {
-            socket.emit('killEntity', { entityId: currentEntity._id, playerId: playerId })
-          }
+          //if (socket) {
+            //socket.emit('killEntity', { entityId: currentEntity._id, playerId: playerId })
+          //}
           setEntityXY()
         }
       }

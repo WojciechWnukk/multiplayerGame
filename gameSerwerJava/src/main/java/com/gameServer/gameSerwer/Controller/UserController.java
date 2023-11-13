@@ -54,7 +54,10 @@ public class UserController {
     }
 
     @PutMapping("/{playerId}")
-    public ResponseEntity<?> movePlayer (@PathVariable("playerId") String playerId, @RequestBody User user) {
+    public ResponseEntity<?> movePlayer (@PathVariable("playerId") String playerId) {
+
+        /*
+        System.out.println(user.getX());
         try {
             Optional<User> existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
@@ -66,11 +69,13 @@ public class UserController {
             }
             //Update user
             User updatedUser = userService.updateUser(playerId, user);
-            System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId());
+            System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
             return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        }*/
+        System.out.println("Put user bez socketa");
+        return null;
     }
 
 
