@@ -3,6 +3,7 @@ package com.gameServer.gameSerwer.Service;
 import com.gameServer.gameSerwer.Model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface UserService {
@@ -10,5 +11,6 @@ public interface UserService {
     User addUser(User user);
     String hashPassword(String password);
     Boolean loginValidation(String email, String password);
-    User updateUser(String id, User user);
+    User updateUserPosition(User user);
+    Boolean deleteUser(String id);
 }

@@ -6,6 +6,7 @@ import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
@@ -54,32 +57,46 @@ public class UserController {
     }
 
     @PutMapping("/{playerId}")
-    public ResponseEntity<?> movePlayer (@PathVariable("playerId") String playerId) {
-
-        /*
-        System.out.println(user.getX());
+    public ResponseEntity<?> movePlayer(@PathVariable("playerId") String playerId, @RequestBody User user) {
         try {
-            Optional<User> existingUser = userService.getAllUsers().stream()
+            User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
-                    .findFirst();
+                    .findFirst()
+                    .orElse(null);
 
-            if (!existingUser.isPresent()) {
+            if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
+            } else {
+                //Update user
+                User updatedUser = userService.updateUserPosition(user);
+                System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
+                return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
             }
-            //Update user
-            User updatedUser = userService.updateUser(playerId, user);
-            System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
-            return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }*/
-        System.out.println("Put user bez socketa");
-        return null;
+        }
     }
 
+    @DeleteMapping("/{playerId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("playerId") String playerId) {
+        try {
+            User existingUser = userService.getAllUsers().stream()
+                    .filter(u -> u.getId().equals(playerId))
+                    .findFirst()
+                    .orElse(null);
 
-
+            if (existingUser == null) {
+                System.out.println("User with this id doesn't exists");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
+            } else {
+                userService.deleteUser(playerId);
+                return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
 
 }

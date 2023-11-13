@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,13 +39,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String id, User user){
-        User userToUpdate = userrepository.findById(id).get();
-        userToUpdate.setNick(user.getNick());
-        userToUpdate.setPassword(user.getPassword());
+    public User updateUserPosition(User user){
+        User userToUpdate = userrepository.findById(user.getId()).get();
         userToUpdate.setX(user.getX());
         userToUpdate.setY(user.getY());
         return userrepository.save(userToUpdate);
+    }
+
+    @Override
+    public Boolean deleteUser(String id){
+        Optional<User> userToDelete = userrepository.findById(id);
+        if(userToDelete.isPresent()){
+            userrepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
 }
