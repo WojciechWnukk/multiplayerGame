@@ -6,6 +6,8 @@ import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +21,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    public UserController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         try {
             List<User> users = userService.getAllUsers();
-            return new ResponseEntity<>(Map.of("data", users, "message", "Lista użytkowników"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("data", users), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -54,27 +63,48 @@ public class UserController {
     }
 
     @PutMapping("/{playerId}")
-    public ResponseEntity<?> movePlayer (@PathVariable("playerId") String playerId, @RequestBody User user) {
+    public ResponseEntity<?> movePlayer(@PathVariable("playerId") String playerId, @RequestBody User user) {
         try {
-            Optional<User> existingUser = userService.getAllUsers().stream()
+            User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
-                    .findFirst();
+                    .findFirst()
+                    .orElse(null);
 
-            if (!existingUser.isPresent()) {
+            if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
+            } else {
+                //Update user
+                User updatedUser = userService.updateUserPosition(user);
+                messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
+
+                System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
+                return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
             }
-            //Update user
-            User updatedUser = userService.updateUser(playerId, user);
-            System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
+    @DeleteMapping("/{playerId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("playerId") String playerId) {
+        try {
+            User existingUser = userService.getAllUsers().stream()
+                    .filter(u -> u.getId().equals(playerId))
+                    .findFirst()
+                    .orElse(null);
 
-
+            if (existingUser == null) {
+                System.out.println("User with this id doesn't exists");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
+            } else {
+                userService.deleteUser(playerId);
+                return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
 
 }
