@@ -23,6 +23,7 @@ const Home = () => {
   const [socket, setSocket] = useState(null);
 
 
+
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
     stompClient = over(socket);
@@ -33,14 +34,34 @@ const Home = () => {
   const onConnected = () => {
     //setSocketData({...socketData, "connected": true})
     //stompClient.subscribe('/topic/connection', onMessageReceived);
+      if (stompClient && stompClient.connected) {
+        stompClient.subscribe('/topic/playerPosition', onMessageReceived);
+      }
     sendMessage();
   };
+
+  
 
   const onError = (err) => {
     console.log(err);
   };
 
-  const onMessageReceived = (payload) => {};
+  const onMessageReceived = (payload) => {
+    console.log("Odswiezammmmmmm");
+    try {
+      const responseData = JSON.parse(payload.body);
+
+      if (responseData && responseData.body && responseData.body.data) {
+          const updatedPlayers = responseData.body.data;
+          console.log(updatedPlayers);
+          setPlayers(updatedPlayers);
+      } else {
+          console.error("Nieprawidłowa struktura danych w odpowiedzi:", responseData);
+      }
+  } catch (error) {
+      console.error("Błąd podczas parsowania danych JSON:", error);
+  }
+  };
 
   const sendMessage = () => {
     console.log(socketData);
@@ -66,7 +87,7 @@ const Home = () => {
         lvl: player.lvl,
         online: true,
       });
-      connect();
+
       console.log("Gram na ", player);
     } catch (error) {
       console.log("Error fetching players", error);
@@ -96,14 +117,16 @@ const Home = () => {
         online: true,
       }));
       console.log("Data" + socketData);
-      sendMessage();
+      //sendMessage();
       //websocket
     } catch (error) {
       console.log("Error fetching players", error);
     }
   };
 
+
   useEffect(() => {
+    connect();
     getPlayers();
     setEntityXY();
     sendMessage();

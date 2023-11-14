@@ -6,6 +6,7 @@ import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,16 @@ public class UserController {
 
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    public UserController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         try {
             List<User> users = userService.getAllUsers();
-            return new ResponseEntity<>(Map.of("data", users, "message", "Lista użytkowników"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("data", users), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -70,6 +76,8 @@ public class UserController {
             } else {
                 //Update user
                 User updatedUser = userService.updateUserPosition(user);
+                messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
+
                 System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
             }
