@@ -1,4 +1,7 @@
 package com.gameServer.gameSerwer.Repository;
 
-public interface EntityRepository {
+import com.gameServer.gameSerwer.Model.Entities;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EntityRepository extends MongoRepository<Entities, String> {
 }
