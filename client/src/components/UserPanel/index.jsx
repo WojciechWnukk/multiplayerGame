@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import axios from 'axios';
 import styles from './styles.module.css';
-const Chat = ({ socket, actualPlayerNick, actualLevel }) => {
+const UserPanel = ({ socket, actualPlayerNick, actualLevel }) => {
     const playerId = localStorage.getItem('playerId');
 
     return (
@@ -21,4 +19,4 @@ const Chat = ({ socket, actualPlayerNick, actualLevel }) => {
     );
 };
 
-export default Chat;
+export default UserPanel;

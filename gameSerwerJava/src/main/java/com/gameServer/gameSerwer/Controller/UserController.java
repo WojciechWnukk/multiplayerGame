@@ -3,9 +3,13 @@ package com.gameServer.gameSerwer.Controller;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Service.UserService;
 import org.bson.json.JsonObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -103,6 +107,33 @@ public class UserController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @MessageMapping("killEntity")
+    @SendTo("/topic/killEntity")
+    public void killEntity(@Payload String payload) {
+        System.out.println("Killing...");
+
+        try {
+            // Ręczne parsowanie JSON do obiektu
+            JSONObject jsonObject = new JSONObject(payload);
+            String entityId = jsonObject.getString("entityId");
+            String playerId = jsonObject.getString("playerId");
+
+            System.out.println("Received killEntity message. Entity ID: " + entityId + ", Player ID: " + playerId);
+
+            Optional<User> userOptional = userService.getUserById(playerId);
+            userOptional.ifPresent(user -> {
+                userService.updateUserLvl(user);
+            });
+            //lvl increase
+            messagingTemplate.convertAndSend("/topic/killEntity", getAllUsers());
+            //ToDo
+            //changing entity status to dead
+
+        } catch ( JSONException e) {
+            e.printStackTrace();
         }
     }
 

@@ -8,9 +8,6 @@ import lombok.*;
 @Setter
 @ToString
 public class Message {
-    private String playerId;
-    private Integer x;
-    private Integer y;
-    private Integer lvl;
-    private Boolean online;
+    private String inputMessage;
+    private String author;
 }
