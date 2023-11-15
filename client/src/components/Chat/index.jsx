@@ -9,21 +9,22 @@ const Chat = ({ socket, actualPlayerNick }) => {
     useEffect(() => {
       console.log("Komponent chatu się załadował")
         const handleMessage = (message) => {
-          console.log('Otrzymano wiadomość:', message);
-          console.log(message.author, actualPlayerNick);
-          if (!lastMessage || (lastMessage.author !== message.author || lastMessage.text !== message.text)) {
-            setMessages((prevMessages) => [...prevMessages, message]);
-            setLastMessage(message);
+          const messageData = JSON.parse(message.body);
+
+        
+          console.log('Otrzymano wiadomość:', messageData);
+          console.log(messageData.author, actualPlayerNick);
+          if (!lastMessage || (lastMessage.author !== messageData.author || lastMessage.text !== messageData.text)) {
+            setMessages((prevMessages) => [...prevMessages, messageData]);
+            setLastMessage(messageData);
           } else {
-            console.log('Ta sama wiadomość', lastMessage, message);
+            console.log('Ta sama wiadomość', lastMessage, messageData);
           }
         };
       
         if (socket) {
-          // Używamy stompClient.subscribe zamiast socket.on
           const subscription = socket.subscribe('/topic/chat', handleMessage);
     
-          // Pamiętaj o odsubskrybowaniu po opuszczeniu komponentu
           return () => subscription.unsubscribe();
         }
       }, [socket, actualPlayerNick, lastMessage]);
@@ -35,14 +36,8 @@ const Chat = ({ socket, actualPlayerNick }) => {
                 text: inputMessage,
                 author: actualPlayerNick,
             };
-
-            // Wyślij wiadomość na serwer WebSocket
             socket.send('/app/chat', {}, JSON.stringify(message));
 
-            // Dodaj wiadomość do lokalnego stanu
-            //setMessages((prevMessages) => [...prevMessages, message]);
-
-            // Wyczyść pole wprowadzania wiadomości
             setInputMessage('');
         }
     };

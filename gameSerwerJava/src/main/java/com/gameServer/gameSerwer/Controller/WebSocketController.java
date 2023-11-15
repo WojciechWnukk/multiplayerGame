@@ -40,20 +40,22 @@ public class WebSocketController {
         return ResponseEntity.status(200).body("Połączono z WebSocketem - serwer");
     }*/
 
-    @MessageMapping("app/chat")
+    @MessageMapping("chat")
     @SendTo("/topic/chat")
-    public ResponseEntity<?> chat(@Payload Message payload) {
-        Map<String, String> message = new HashMap<>();
-        System.out.println(payload.toString());
-        /*
-        message.put("content", payload.getContent());
-        message.put("sender", payload.getSender());*/
+    public void chat(@Payload String payload) {
+        System.out.println("chatting");
 
+        try {
+            JSONObject json = new JSONObject(payload);
+            String nick = json.getString("text");
+            String message = json.getString("author");
+            System.out.println("nick: " + nick);
+            System.out.println("message: " + message);
 
-        System.out.println(payload.toString());
-        //userService.updateUserPosition(payload);
-        messagingTemplate.convertAndSend("/topic/chat", message);
-        return ResponseEntity.status(200).body("Połączono z WebSocketem - serwer");
+            messagingTemplate.convertAndSend("/topic/chat", payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
