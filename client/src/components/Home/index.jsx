@@ -181,6 +181,13 @@ const Home = () => {
     const handleKeyPress = (e) => {
       const speed = 40; // Szybkość poruszania się gracza
 
+      const isInputFocused = document.activeElement.tagName === 'INPUT';
+
+      // Jeśli fokus jest na polu do wpisywania, przerwij obsługę klawiszy
+      if (isInputFocused) {
+        return;
+      }
+
       switch (e.key) {
         case "ArrowUp":
         case "w":
