@@ -21,6 +21,8 @@ const Home = () => {
     online: true,
   });
   const [socket, setSocket] = useState(null);
+  const actualPlayerRef = useRef(null);
+
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -32,7 +34,8 @@ const Home = () => {
   const onConnected = () => {
     if (stompClient && stompClient.connected) {
       stompClient.subscribe("/topic/playerPosition", onMessageReceived);
-      stompClient.subscribe("/topic/entities", killEntity);
+      stompClient.subscribe("/topic/entities", updatedEntities);
+      stompClient.subscribe("/topic/killEntity", onMessageReceived);
     }
 
 
@@ -49,7 +52,15 @@ const Home = () => {
 
       if (responseData && responseData.body && responseData.body.data) {
         const updatedPlayers = responseData.body.data;
-        console.log(updatedPlayers);
+        console.log("move player", updatedPlayers);
+        setPlayers(updatedPlayers);
+        const player = updatedPlayers.find((player) => player.id === playerId);
+        console.log("player", player);
+        actualPlayerRef.current = player;
+
+        // Możesz użyć actualPlayerRef.current w dowolnym miejscu
+        console.log("Actual player", actualPlayerRef.current);
+        setActualLevel(player.lvl);
         setPlayers(updatedPlayers);
       } else {
         console.error(
@@ -62,7 +73,7 @@ const Home = () => {
     }
   };
 
-  const killEntity = (payload) => {
+  const updatedEntities = (payload) => {
     try {
       const responseData = JSON.parse(payload.body);
 
@@ -80,6 +91,25 @@ const Home = () => {
       console.error("Błąd podczas parsowania danych JSON:", error);
     }
   };
+/*
+  const killEntity = (payload) => {
+    try {
+      const responseData = JSON.parse(payload.body);
+      console.log("kill entity", responseData.body.data);
+
+      if (responseData && responseData.body && responseData.body.data) {
+        const updatedUsers = responseData.body.data;
+        setPlayers(updatedUsers);
+      } else {
+        console.error(
+          "Nieprawidłowa struktura danych w odpowiedzi:",
+          responseData
+        );
+      }
+    } catch (error) {
+      console.error("Błąd podczas parsowania danych JSON:", error);
+    }
+  };*/
   
   const sendMessage = () => {
     console.log(socketData);
@@ -223,7 +253,9 @@ const Home = () => {
     if (playerPosition.x === undefined || playerPosition.y === undefined)
       return;
     movePlayer(playerId, playerPosition.x, playerPosition.y);
-    checkEntityCollision();
+    setTimeout(() => {
+      checkEntityCollision();
+    }, 50);
   }, [playerId, playerPosition]);
 
   const getEntities = async () => {
@@ -299,9 +331,9 @@ const Home = () => {
         <h1>Twój poziom: {actualLevel}</h1>
   </div>*/}
       <div className={styles.chatContainer}>
-        {/*socket && actualPlayer.nick && (
-          <Chat socket={socket} actualPlayerNick={actualPlayer.nick} />
-        )*/}
+        {stompClient && actualPlayer.nick && (
+          <Chat socket={stompClient} actualPlayerNick={actualPlayer.nick} />
+        )}
       </div>
       <div className={styles.map}>
         {players
@@ -315,9 +347,9 @@ const Home = () => {
                 }
                 style={{
                   transform: `translate(${
-                    player._id === playerId ? playerPosition.x : player.x
+                    player.id === playerId ? playerPosition.x : player.x
                   }px, ${
-                    player._id === playerId ? playerPosition.y : player.y
+                    player.id === playerId ? playerPosition.y : player.y
                   }px)`,
                   transition: "transform 0.1s ease-in-out", // Dodaj animację CSS
                 }}
@@ -340,13 +372,13 @@ const Home = () => {
           : null}
       </div>
       <div className={styles.userPanelContainer}>
-        {/*socket && actualPlayer.nick && (
+        {stompClient && actualPlayer.nick && (
           <UserPanel
-            socket={socket}
+            socket={stompClient}
             actualPlayerNick={actualPlayer.nick}
             actualLevel={actualLevel}
           />
-        */}
+        )}
       </div>
     </div>
   );
