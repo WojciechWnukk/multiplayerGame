@@ -18,11 +18,10 @@ const Home = () => {
   const [previousPlayerPosition, setPreviousPlayerPosition] = useState({});
   const [socketData, setSocketData] = useState({
     playerId: playerId,
-    online: true,
+    online: true
   });
   const [socket, setSocket] = useState(null);
   const actualPlayerRef = useRef(null);
-
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -36,8 +35,9 @@ const Home = () => {
       stompClient.subscribe("/topic/playerPosition", onMessageReceived);
       stompClient.subscribe("/topic/entities", updatedEntities);
       stompClient.subscribe("/topic/killEntity", onMessageReceived);
+      stompClient.subscribe("/topic/connectPlayer", onMessageReceived);
+      stompClient.subscribe("/topic/disconnectPlayer", onMessageReceived);
     }
-
 
     sendMessage();
   };
@@ -52,14 +52,11 @@ const Home = () => {
 
       if (responseData && responseData.body && responseData.body.data) {
         const updatedPlayers = responseData.body.data;
-        console.log("move player", updatedPlayers);
         setPlayers(updatedPlayers);
         const player = updatedPlayers.find((player) => player.id === playerId);
         console.log("player", player);
         actualPlayerRef.current = player;
 
-        // Możesz użyć actualPlayerRef.current w dowolnym miejscu
-        console.log("Actual player", actualPlayerRef.current);
         setActualLevel(player.lvl);
         setPlayers(updatedPlayers);
       } else {
@@ -91,7 +88,7 @@ const Home = () => {
       console.error("Błąd podczas parsowania danych JSON:", error);
     }
   };
-/*
+  /*
   const killEntity = (payload) => {
     try {
       const responseData = JSON.parse(payload.body);
@@ -110,7 +107,7 @@ const Home = () => {
       console.error("Błąd podczas parsowania danych JSON:", error);
     }
   };*/
-  
+
   const sendMessage = () => {
     console.log(socketData);
     if (stompClient && stompClient.connected) {
@@ -175,13 +172,25 @@ const Home = () => {
     getPlayers();
     setEntityXY();
     sendMessage();
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
+
+  
+  const handleBeforeUnload = () => {
+    // Wyślij wiadomość na serwer przed zamknięciem okna
+    if (stompClient && stompClient.connected) {
+      stompClient.send("/app/disconnectPlayer", {}, JSON.stringify({playerId: playerId, online: false}));
+    }
+  };
 
   useEffect(() => {
     const handleKeyPress = (e) => {
       const speed = 40; // Szybkość poruszania się gracza
 
-      const isInputFocused = document.activeElement.tagName === 'INPUT';
+      const isInputFocused = document.activeElement.tagName === "INPUT";
 
       // Jeśli fokus jest na polu do wpisywania, przerwij obsługę klawiszy
       if (isInputFocused) {
@@ -320,7 +329,11 @@ const Home = () => {
           //zabijanie przez websocket
 
           console.log("Entity killed");
-          stompClient.send("/app/killEntity", {}, JSON.stringify({ entityId: currentEntity.id, playerId: playerId }));
+          stompClient.send(
+            "/app/killEntity",
+            {},
+            JSON.stringify({ entityId: currentEntity.id, playerId: playerId })
+          );
           setEntityXY();
         }
       }

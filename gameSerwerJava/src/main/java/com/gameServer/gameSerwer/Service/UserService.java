@@ -16,4 +16,5 @@ public interface UserService {
     Boolean deleteUser(String id);
     Optional<User> getUserById(String id);
     ResponseEntity<?> updateUserLvl(User user);
+    ResponseEntity<?> updateUserOnline(User user, Boolean online);
 }

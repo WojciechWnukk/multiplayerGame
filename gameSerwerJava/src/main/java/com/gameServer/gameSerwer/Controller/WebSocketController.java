@@ -26,19 +26,6 @@ public class WebSocketController {
     private UserService userService;
 
 
-//czy to jest potrzebne??
-    /*
-    @MessageMapping("/connection")
-    @SendTo("/topic/connection")
-    public ResponseEntity<?> connection(@Payload Message payload) {
-        Map<String, String> message = new HashMap<>();
-        message.put("content", "Połączono z WebSocketem");
-
-        System.out.println(payload.toString());
-        //userService.updateUserPosition(payload);
-        messagingTemplate.convertAndSend("/topic/connection", message);
-        return ResponseEntity.status(200).body("Połączono z WebSocketem - serwer");
-    }*/
 
     @MessageMapping("chat")
     @SendTo("/topic/chat")
