@@ -18,31 +18,31 @@ public class UserServiceImpl implements UserService {
     private UserRepository userrepository;
 
     @Override
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userrepository.findAll();
     }
 
     @Override
-    public User addUser(User user){
+    public User addUser(User user) {
         System.out.println("Dodaje nowego user" + user);
         return userrepository.save(user);
     }
 
     @Override
-    public String hashPassword(String password){
+    public String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     @Override
-    public Boolean loginValidation(String email, String password){
-        if(email.isEmpty() || password.isEmpty()){
+    public Boolean loginValidation(String email, String password) {
+        if (email.isEmpty() || password.isEmpty()) {
             return false;
         }
         return true;
     }
 
     @Override
-    public User updateUserPosition(User user){
+    public User updateUserPosition(User user) {
         User userToUpdate = userrepository.findById(user.getId()).get();
         userToUpdate.setX(user.getX());
         userToUpdate.setY(user.getY());
@@ -50,9 +50,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean deleteUser(String id){
+    public Boolean deleteUser(String id) {
         Optional<User> userToDelete = userrepository.findById(id);
-        if(userToDelete.isPresent()){
+        if (userToDelete.isPresent()) {
             userrepository.deleteById(id);
             return true;
         }
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(String id){
+    public Optional<User> getUserById(String id) {
         try {
             return userrepository.findById(id);
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUserLvl(User user){
+    public ResponseEntity<?> updateUserLvl(User user) {
         try {
             Optional<User> optionalUser = userrepository.findById(user.getId());
 
@@ -85,6 +85,20 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             System.out.println("Error while updating user level");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserOnline(User user, Boolean online) {
+        System.out.println("User online updated" + user);
+        try {
+            user.setOnline(online);
+            System.out.println("User online updated" + user);
+            userrepository.save(user);
+            return ResponseEntity.ok().body(user);
+        } catch (Exception e) {
+            System.out.println("Error while updating user online");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

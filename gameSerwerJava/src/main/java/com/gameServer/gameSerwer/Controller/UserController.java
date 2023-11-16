@@ -1,5 +1,6 @@
 package com.gameServer.gameSerwer.Controller;
 
+import com.gameServer.gameSerwer.Model.Message;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Service.UserService;
 import org.bson.json.JsonObject;
@@ -14,6 +15,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,32 +112,45 @@ public class UserController {
         }
     }
 
-    @MessageMapping("killEntity")
-    @SendTo("/topic/killEntity")
-    public void killEntity(@Payload String payload) {
-        System.out.println("Killing...");
 
+    @MessageMapping("connection")
+    @SendTo("/topic/connection")
+    public void connectPlayer(@Payload String payload) {
+        System.out.println("Connected..." + payload.toString());
         try {
-            // Ręczne parsowanie JSON do obiektu
             JSONObject jsonObject = new JSONObject(payload);
-            String entityId = jsonObject.getString("entityId");
             String playerId = jsonObject.getString("playerId");
-
-            System.out.println("Received killEntity message. Entity ID: " + entityId + ", Player ID: " + playerId);
-
+            Boolean online = jsonObject.getBoolean("online");
+            System.out.println("Player ID: " + playerId + ", Online: " + online);
             Optional<User> userOptional = userService.getUserById(playerId);
             userOptional.ifPresent(user -> {
-                userService.updateUserLvl(user);
+                userService.updateUserOnline(user, online);
             });
-            //lvl increase
-            messagingTemplate.convertAndSend("/topic/killEntity", getAllUsers());
-            //ToDo
-            //changing entity status to dead
-
-        } catch ( JSONException e) {
+            messagingTemplate.convertAndSend("/topic/connection", getAllUsers());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    @MessageMapping("disconnectPlayer")
+    @SendTo("/topic/disconnectPlayer")
+    public void disconnectPlayer(@Payload String payload) {
+        System.out.println("Disconnecting..." + payload);
+        try {
+            JSONObject jsonObject = new JSONObject(payload);
+            String playerId = jsonObject.getString("playerId");
+            Boolean online = jsonObject.getBoolean("online");
+            Optional<User> userOptional = userService.getUserById(playerId);
+            userOptional.ifPresent(user -> {
+                userService.updateUserOnline(user, online);
+            });
+            messagingTemplate.convertAndSend("/topic/disconnectPlayer", getAllUsers());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 }

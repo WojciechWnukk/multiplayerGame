@@ -1,5 +1,5 @@
 == d ==
-[ ] dodanie punktów ew lvla 
+[x] dodanie punktów ew lvla 
 [ ] dodanie entities do bazy danych i tam generowac kordy od razu dla kazdego gracza zeby byly
 [ ] na poczatek gdy gracz stanie na te same kordy zabij entity i ustaw respawn
-
+[ ] respawn entity
