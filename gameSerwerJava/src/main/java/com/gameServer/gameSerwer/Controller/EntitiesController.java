@@ -69,7 +69,7 @@ public class EntitiesController {
         }
     }
 
-    @MessageMapping("killEntity")
+    @MessageMapping("killEntity") // to można zrobić jako Service jak w chat aby SOLID
     @SendTo("/topic/killEntity")
     public void killEntity(@Payload String payload) {
         System.out.println("Killing...");

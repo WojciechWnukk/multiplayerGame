@@ -2,6 +2,7 @@ package com.gameServer.gameSerwer.Controller;
 
 import com.gameServer.gameSerwer.Model.Message;
 import com.gameServer.gameSerwer.Model.User;
+import com.gameServer.gameSerwer.Service.ChatService;
 import com.gameServer.gameSerwer.Service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,33 +20,20 @@ import java.util.Optional;
 
 
 @Controller
-public class WebSocketController {
+public class ChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
     @Autowired
-    private UserService userService;
+    private ChatService chatService;
 
 
 
     @MessageMapping("chat")
     @SendTo("/topic/chat")
     public void chat(@Payload String payload) {
-        System.out.println("chatting");
-
-        try {
-            JSONObject json = new JSONObject(payload);
-            String nick = json.getString("text");
-            String message = json.getString("author");
-            System.out.println("nick: " + nick);
-            System.out.println("message: " + message);
-
-            messagingTemplate.convertAndSend("/topic/chat", payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        chatService.processChatMessage(payload);
     }
-
-
 
 }
 

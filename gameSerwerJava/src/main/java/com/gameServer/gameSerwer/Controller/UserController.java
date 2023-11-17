@@ -74,7 +74,7 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null); // za to -1pkt będzie
 
             if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
@@ -98,7 +98,7 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null);// za to -1pkt będzie
 
             if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
@@ -149,6 +149,7 @@ public class UserController {
             e.printStackTrace();
         }
     }
+
 
 
 
