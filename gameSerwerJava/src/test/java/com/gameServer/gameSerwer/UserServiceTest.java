@@ -9,20 +9,24 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 import java.lang.reflect.Array;
 import java.util.*;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class UserControllerTest {
+public class UserServiceTest {
 
-    @Mock
+    @Autowired
     private UserService userService;
     @Mock
     private UserRepository userRepository;
@@ -52,10 +56,10 @@ public class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(Arrays.asList(usersArray));
 
         // Act
-        System.out.println(userService.getAllUsers());
-
+        List<User> users = userService.getAllUsers();
         // Assert
-        assertEquals(Arrays.stream(usersArray).count(), userService.getAllUsers().size());
+        assertThat(users, hasSize(usersArray.length));
+
     }
 
     @Test
@@ -63,26 +67,40 @@ public class UserControllerTest {
         // Arrange
         User user = new User("1", "user1", 0, 0, 1, true, "email", "password");
         when(userService.updateUserPosition(any(User.class))).thenReturn(user);
-        when(userService.getAllUsers()).thenReturn(Collections.singletonList(user));
 
-        System.out.println(userService.getAllUsers());
         User userUpdated = new User("1", "user1", 40, 40, 1, true, "email", "password");
         when(userService.updateUserPosition(any(User.class))).thenReturn(userUpdated);
-        when(userService.getAllUsers()).thenReturn(Collections.singletonList(userUpdated));
+        when(userService.getUserById("1")).thenReturn(Optional.of(userUpdated));
 
+        assertEquals(0, user.getX());
+        assertEquals(0, user.getY());
         // Act
         userService.updateUserPosition(userUpdated);
-        System.out.println(userService.getAllUsers());
-
-        Optional<User> actualUser = userService.getUserById("1");
 
         // Assert
-        /*
-        assertNotNull(userUpdated);
-        assertEquals(userUpdated, userService.getUserById("1"));
-        assertEquals(userUpdated.getX(), userUpdated.getX());
-        assertEquals(userUpdated.getY(), userUpdated.getY());*/
+        Optional<User> actualUser = userService.getUserById("1");
+        assertTrue(actualUser.isPresent());
 
+        User retrievedUser = actualUser.get();
+        assertEquals("1", retrievedUser.getId());
+        assertEquals(40, retrievedUser.getX());
+        assertEquals(40, retrievedUser.getY());
+        assertEquals("user1", retrievedUser.getNick());
     }
+
+    @Test
+    public void loginValidation() {
+
+        // Act & Assert
+        assertEquals(true, userService.loginValidation("nonEmptyEmail", "nonEmptyPassword"));
+
+        assertFalse(userService.loginValidation("", "password"));
+        assertFalse(userService.loginValidation("email", ""));
+        assertFalse(userService.loginValidation("", ""));
+    }
+
+
+
+
 
 }
