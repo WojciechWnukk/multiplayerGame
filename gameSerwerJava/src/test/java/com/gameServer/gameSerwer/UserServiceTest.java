@@ -10,13 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -24,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = GameSerwerApplication.class)
 public class UserServiceTest {
 
     @Autowired
@@ -42,6 +41,8 @@ public class UserServiceTest {
         MockitoAnnotations.openMocks(this);
 
     }
+
+    //jednostkowe
 
     @Test
     public void getAllUsers_shouldReturnListOfUsers() {
@@ -92,12 +93,14 @@ public class UserServiceTest {
     public void loginValidation() {
 
         // Act & Assert
-        assertEquals(true, userService.loginValidation("nonEmptyEmail", "nonEmptyPassword"));
+        assertTrue(userService.loginValidation("nonEmptyEmail", "nonEmptyPassword"));
 
         assertFalse(userService.loginValidation("", "password"));
         assertFalse(userService.loginValidation("email", ""));
         assertFalse(userService.loginValidation("", ""));
     }
+
+
 
 
 
