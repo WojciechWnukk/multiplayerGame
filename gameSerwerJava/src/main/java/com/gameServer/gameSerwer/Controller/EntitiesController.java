@@ -53,7 +53,7 @@ public class EntitiesController {
                     .map(e -> entityService.updateEntity(entityId, entity))
                     .orElseThrow(() -> new Exception("Entity not found"));
 
-            if(existingEntity == null) {
+            if (existingEntity == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entity not found");
             } else {
                 Entities updatedEntity = entityService.updateEntity(entityId, entity);

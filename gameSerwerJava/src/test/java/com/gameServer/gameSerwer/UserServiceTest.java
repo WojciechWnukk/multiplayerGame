@@ -1,51 +1,47 @@
 package com.gameServer.gameSerwer;
 
-import com.gameServer.gameSerwer.Controller.UserController;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Repository.UserRepository;
 import com.gameServer.gameSerwer.Service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.util.List;
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-
-
-import java.util.*;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @SpringBootTest(classes = GameSerwerApplication.class)
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class UserServiceTest {
 
     @Autowired
     private UserService userService;
-    @Mock
+    @Autowired
     private UserRepository userRepository;
 
     @Mock
     private SimpMessagingTemplate messagingTemplate;
 
-    @InjectMocks
-    private UserController userController;
-
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-
+    void setUp(){
+        userRepository.deleteAll();
     }
 
-    //jednostkowe
+
+
+    //unit tests
 
     @Test
     public void getAllUsers_shouldReturnListOfUsers() {
+        System.out.println(userService.getAllUsers());
         // Arrange
         User user = new User("1", "user1", 0, 0, 1, true, "email", "password");
         User user2 = new User("2", "user2", 0, 0, 1, true, "email2", "password2");
@@ -53,8 +49,6 @@ public class UserServiceTest {
         userService.addUser(user);
         userService.addUser(user2);
         User[] usersArray = {user, user2};
-
-        when(userService.getAllUsers()).thenReturn(Arrays.asList(usersArray));
 
         // Act
         List<User> users = userService.getAllUsers();
@@ -67,11 +61,11 @@ public class UserServiceTest {
     public void movePlayer_shouldUpdateUserPosition() {
         // Arrange
         User user = new User("1", "user1", 0, 0, 1, true, "email", "password");
-        when(userService.updateUserPosition(any(User.class))).thenReturn(user);
+
+        userService.addUser(user);
 
         User userUpdated = new User("1", "user1", 40, 40, 1, true, "email", "password");
-        when(userService.updateUserPosition(any(User.class))).thenReturn(userUpdated);
-        when(userService.getUserById("1")).thenReturn(Optional.of(userUpdated));
+
 
         assertEquals(0, user.getX());
         assertEquals(0, user.getY());

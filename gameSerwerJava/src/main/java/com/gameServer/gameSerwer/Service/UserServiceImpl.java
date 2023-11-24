@@ -2,7 +2,6 @@ package com.gameServer.gameSerwer.Service;
 
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Repository.UserRepository;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userrepository.findAll();
+        return (List<User>) userrepository.findAll();
     }
 
     @Override
@@ -43,10 +43,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUserPosition(User user) {
-        User userToUpdate = userrepository.findById(user.getId()).get();
-        userToUpdate.setX(user.getX());
-        userToUpdate.setY(user.getY());
-        return userrepository.save(userToUpdate);
+        try {
+            User userToUpdate = userrepository.findById(user.getId()).get();
+            userToUpdate.setX(user.getX());
+            userToUpdate.setY(user.getY());
+            return userrepository.save(userToUpdate);
+        } catch (NoSuchElementException e) {
+            // Obsługa sytuacji, gdy Optional.get() jest wywoływane na pustym Optional
+            throw new NoSuchElementException("User with this id does not exist");
+        }
     }
 
     @Override

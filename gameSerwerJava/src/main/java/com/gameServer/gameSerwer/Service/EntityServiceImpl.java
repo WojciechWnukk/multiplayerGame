@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EntityServiceImpl implements EntityService{
+public class EntityServiceImpl implements EntityService {
     @Autowired
     private EntityRepository entityRepository;
 
     @Override
-    public List<Entities> getAllEntities(){
+    public List<Entities> getAllEntities() {
         return entityRepository.findAll();
     }
 
     @Override
-    public Entities updateEntity(String id, Entities entity){
+    public Entities updateEntity(String id, Entities entity) {
         Entities entityToUpdate = entityRepository.findById(id).get();
         entityToUpdate.setX(entity.getX());
         entityToUpdate.setY(entity.getY());

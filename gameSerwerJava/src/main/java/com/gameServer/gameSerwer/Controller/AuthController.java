@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -20,10 +19,11 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<?> auth(@RequestBody User user) {
+
         Optional<User> existingUser = userService.getAllUsers().stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
                 .findFirst();
-        if(userService.loginValidation(user.getEmail(), user.getPassword()) == false){
+        if (userService.loginValidation(user.getEmail(), user.getPassword()) == false) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
         }
 
