@@ -1,10 +1,7 @@
 package com.gameServer.gameSerwer.Controller;
 
-import com.gameServer.gameSerwer.Model.Message;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Service.UserService;
-import org.bson.json.JsonObject;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +70,7 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null); // za to -1pkt będzie
 
             if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
@@ -98,7 +94,7 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null);// za to -1pkt będzie
 
             if (existingUser == null) {
                 System.out.println("User with this id doesn't exists");
@@ -149,8 +145,6 @@ public class UserController {
             e.printStackTrace();
         }
     }
-
-
 
 
 }

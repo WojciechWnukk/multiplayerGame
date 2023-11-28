@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -14,16 +13,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin
-public class authController {
+public class AuthController {
     @Autowired
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> auth(@RequestBody User user) {
+    public ResponseEntity<?> auth(@RequestBody User user) { // isUser i validateUser trzeba przenieść do UserService lub stworzyć nowy serwis
+
         Optional<User> existingUser = userService.getAllUsers().stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
                 .findFirst();
-        if(userService.loginValidation(user.getEmail(), user.getPassword()) == false){
+        if (userService.loginValidation(user.getEmail(), user.getPassword()) == false) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
         }
 

@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @ToString
-@Document("users")
+//@Document("users")
 public class User {
     private String id;
     private String nick;
@@ -21,11 +20,9 @@ public class User {
     private String email;
     private String password;
 
-    public Boolean getOnline(){
+    public Boolean getOnline() {
         return online;
     }
-
-
 
 
 }
