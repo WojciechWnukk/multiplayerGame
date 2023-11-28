@@ -18,7 +18,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> auth(@RequestBody User user) {
+    public ResponseEntity<?> auth(@RequestBody User user) { // isUser i validateUser trzeba przenieść do UserService lub stworzyć nowy serwis
 
         Optional<User> existingUser = userService.getAllUsers().stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
