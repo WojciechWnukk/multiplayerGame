@@ -5,7 +5,8 @@ import Chat from "../Chat";
 import UserPanel from "../UserPanel";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
-
+import Modal from "react-modal";
+Modal.setAppElement('#root');
 var stompClient = null;
 const Home = () => {
   const [players, setPlayers] = useState([]);
@@ -18,10 +19,12 @@ const Home = () => {
   const [previousPlayerPosition, setPreviousPlayerPosition] = useState({});
   const [socketData, setSocketData] = useState({
     playerId: playerId,
-    online: true
+    online: true,
   });
   const [socket, setSocket] = useState(null);
   const actualPlayerRef = useRef(null);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [entityId, setEntityId] = useState(0);
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -178,11 +181,14 @@ const Home = () => {
     };
   }, []);
 
-  
   const handleBeforeUnload = () => {
     // Wyślij wiadomość na serwer przed zamknięciem okna
     if (stompClient && stompClient.connected) {
-      stompClient.send("/app/disconnectPlayer", {}, JSON.stringify({playerId: playerId, online: false}));
+      stompClient.send(
+        "/app/disconnectPlayer",
+        {},
+        JSON.stringify({ playerId: playerId, online: false })
+      );
     }
   };
 
@@ -340,6 +346,40 @@ const Home = () => {
     }
   };
 
+  const handleEntityClick = () => {
+    setIsOpen(true);
+  };
+
+  const [formData, setFormData] = useState({
+    name: "",
+    x: 0,
+    y: 0,
+    lvl: 1,
+    alive: true,
+    respawnTime: 0,
+    image: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+    try {
+      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${entityId}`;
+      const { formData: res } = await axios.put(url, formData);
+      console.log(res);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     getEntities();
   }, []);
@@ -387,6 +427,11 @@ const Home = () => {
                 style={{
                   transform: `translate(${entity.x}px, ${entity.y}px)`,
                 }}
+                onClick={() => {
+                  setEntityId(entity.id);
+                  handleEntityClick();
+                }
+                }
               ></div>
             ))
           : null}
@@ -400,6 +445,97 @@ const Home = () => {
           />
         )}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setIsOpen(false)}
+        contentLabel="Example Modal"
+        className={styles.modal_container}
+
+      >
+        <h2 className={styles.modal_title}>Edit Entity {entityId}</h2>
+        <form className={styles.modal_form} onSubmit={handleSubmit}>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          X:
+          <input
+            type="number"
+            name="x"
+            value={formData.x}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          Y:
+          <input
+            type="number"
+            name="y"
+            value={formData.y}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          Level:
+          <input
+            type="number"
+            name="lvl"
+            value={formData.lvl}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          Alive:
+          <input
+            type="checkbox"
+            name="alive"
+            checked={formData.alive}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          Respawn Time:
+          <input
+            type="number"
+            name="respawnTime"
+            value={formData.respawnTime}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <label>
+          Image:
+          <input
+            type="text"
+            name="image"
+            value={formData.image}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+
+        <button type="submit">Submit</button>
+        <button className={styles.btn_close} onClick={() => setIsOpen(false)}>close</button>
+
+      </form>
+      </Modal>
     </div>
   );
 };

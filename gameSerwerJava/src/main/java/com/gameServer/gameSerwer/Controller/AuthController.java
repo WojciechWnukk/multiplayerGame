@@ -18,22 +18,13 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> auth(@RequestBody User user) { // isUser i validateUser trzeba przenieść do UserService lub stworzyć nowy serwis
+    public ResponseEntity<?> auth(@RequestBody User user) {
 
         Optional<User> existingUser = userService.getAllUsers().stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
                 .findFirst();
-        if (userService.loginValidation(user.getEmail(), user.getPassword()) == false) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
-        }
 
-        if (!existingUser.isPresent()) {
-            System.out.println("User with this nick didn't exists");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
-        }
-
-        if (!BCrypt.checkpw(user.getPassword(), existingUser.get().getPassword())) {
-            System.out.println("Invalid Password");
+        if (!existingUser.isPresent() || !BCrypt.checkpw(user.getPassword(), existingUser.get().getPassword()) || userService.loginValidation(user.getEmail(), user.getPassword()) == false) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
         }
 

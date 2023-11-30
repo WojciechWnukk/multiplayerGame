@@ -34,6 +34,27 @@ public class EntitiesController {
         this.messagingTemplate = messagingTemplate;
     }
 
+    @PostMapping
+    public ResponseEntity<?> addEntity(@RequestBody Entities entity) {
+        try {
+            Optional<Entities> existingEntity = entityService.getAllEntities().stream()
+                    .filter(e -> e.getName().equals(entity.getName()))
+                    .findFirst();
+
+            if (existingEntity.isPresent()) {
+                System.out.println("Entity with this name already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Entity with this name already exists");
+            }
+
+            Entities newEntity = entityService.addEntity(entity);
+            System.out.println("Entity added" + newEntity);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllEntities() {
         try {
@@ -53,29 +74,22 @@ public class EntitiesController {
                     .map(e -> entityService.updateEntity(entityId, entity))
                     .orElseThrow(() -> new Exception("Entity not found"));
 
-            if (existingEntity == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entity not found");
-            } else {
-                Entities updatedEntity = entityService.updateEntity(entityId, entity);
-                messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
-                System.out.println("Entity updated" + updatedEntity);
-
-                return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
-            }
-
+            Entities updatedEntity = entityService.updateEntity(entityId, entity);
+            messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
+            System.out.println("Entity updated" + updatedEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @MessageMapping("killEntity") // to można zrobić jako Service jak w chat aby SOLID
+    @MessageMapping("killEntity")
     @SendTo("/topic/killEntity")
     public void killEntity(@Payload String payload) {
         System.out.println("Killing...");
 
         try {
-            // Ręczne parsowanie JSON do obiektu
             JSONObject jsonObject = new JSONObject(payload);
             String entityId = jsonObject.getString("entityId");
             String playerId = jsonObject.getString("playerId");
@@ -89,8 +103,7 @@ public class EntitiesController {
             //lvl increase
             UserController userController = new UserController(messagingTemplate);
             messagingTemplate.convertAndSend("/topic/killEntity", userController.getAllUsers());
-            //ToDo
-            //changing entity status to dead
+            //ToDO changing entity status to dead
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class UserController {
                     .filter(u -> u.getNick().equals(user.getNick()))
                     .findFirst();
 
+
             if (existingUser.isPresent()) {
                 System.out.println("User with this nick already exists");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this nick already exists");
@@ -70,19 +72,13 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null); // za to -1pkt będzie
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this id not found"));
 
-            if (existingUser == null) {
-                System.out.println("User with this id doesn't exists");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
-            } else {
-                //Update user
                 User updatedUser = userService.updateUserPosition(user);
                 messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
 
                 System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
-            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -94,15 +90,10 @@ public class UserController {
             User existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getId().equals(playerId))
                     .findFirst()
-                    .orElse(null);// za to -1pkt będzie
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this id not found"));
 
-            if (existingUser == null) {
-                System.out.println("User with this id doesn't exists");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id doesn't exists");
-            } else {
                 userService.deleteUser(playerId);
                 return ResponseEntity.status(HttpStatus.OK).body("User deleted");
-            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

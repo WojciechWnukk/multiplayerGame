@@ -9,7 +9,6 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @ToString
-//@Document("entities")
 public class Entities {
     private String id;
     private String name;

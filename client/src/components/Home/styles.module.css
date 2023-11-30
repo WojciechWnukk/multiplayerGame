@@ -238,3 +238,48 @@ h2 {
     flex-direction: column;
     justify-content: flex-start;
 }
+
+.modal_container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .modal_title {
+    margin-bottom: 10px;
+  }
+  
+  .modal_content {
+    margin-bottom: 20px;
+  }
+  
+  .modal_form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .modal_form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  
+  .modal_form button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .modal_form button:hover {
+    background-color: #45a049;
+  }

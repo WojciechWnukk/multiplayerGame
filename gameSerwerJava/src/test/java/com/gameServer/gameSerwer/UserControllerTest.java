@@ -1,16 +1,12 @@
 package com.gameServer.gameSerwer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gameServer.gameSerwer.Controller.UserController;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;

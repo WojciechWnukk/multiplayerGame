@@ -25,4 +25,10 @@ public class EntityServiceImpl implements EntityService {
         return entityRepository.save(entityToUpdate);
     }
 
+    @Override
+    public Entities addEntity(Entities entity) {
+        return entityRepository.save(entity);
+    }
+
+
 }

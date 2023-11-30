@@ -9,7 +9,6 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @ToString
-//@Document("users")
 public class User {
     private String id;
     private String nick;

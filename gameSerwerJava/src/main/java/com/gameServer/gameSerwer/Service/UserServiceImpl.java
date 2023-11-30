@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setY(user.getY());
             return userrepository.save(userToUpdate);
         } catch (NoSuchElementException e) {
-            // Obsługa sytuacji, gdy Optional.get() jest wywoływane na pustym Optional
             throw new NoSuchElementException("User with this id does not exist");
         }
     }
