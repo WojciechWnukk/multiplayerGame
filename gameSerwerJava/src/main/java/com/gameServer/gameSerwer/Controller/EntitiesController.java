@@ -71,10 +71,9 @@ public class EntitiesController {
             Entities existingEntity = entityService.getAllEntities().stream()
                     .filter(e -> e.getId().equals(entityId))
                     .findFirst()
-                    .map(e -> entityService.updateEntity(entityId, entity))
                     .orElseThrow(() -> new Exception("Entity not found"));
 
-            Entities updatedEntity = entityService.updateEntity(entityId, entity);
+            Entities updatedEntity = entityService.updateEntity(entity);
             messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
             System.out.println("Entity updated" + updatedEntity);
             return ResponseEntity.status(HttpStatus.OK).body(existingEntity);

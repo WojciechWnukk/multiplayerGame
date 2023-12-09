@@ -6,7 +6,7 @@ import UserPanel from "../UserPanel";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import Modal from "react-modal";
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 var stompClient = null;
 const Home = () => {
   const [players, setPlayers] = useState([]);
@@ -292,26 +292,27 @@ const Home = () => {
     }
   };
 
-  const setEntityXY = async () => {
-    for (const currentEntity of entities) {
-      console.log("Current", currentEntity);
-      if (currentEntity.alive) {
-        console.log("Enitity is alive");
-        const gridSize = 40;
-        const x = Math.floor(Math.random() * (1200 / gridSize)) * gridSize;
-        const y = Math.floor(Math.random() * (800 / gridSize)) * gridSize;
-        try {
-          const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity.id}`;
-          const response = await axios.put(url, {
-            x: x,
-            y: y,
-            alive: true,
-          });
-          const entity = response.data.data;
-          console.log(entity);
-        } catch (error) {
-          console.log("Error fetching entities", error);
-        }
+  const setEntityXY = async (killedEntityId) => {
+    const currentEntity = entities.find(
+      (entity) => entity.id === killedEntityId
+    );
+    console.log("Current", currentEntity);
+    if (currentEntity && currentEntity.alive) {
+      console.log("Enitity is alive");
+      const gridSize = 40;
+      const x = Math.floor(Math.random() * (1200 / gridSize)) * gridSize;
+      const y = Math.floor(Math.random() * (800 / gridSize)) * gridSize;
+      try {
+        const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity.id}`;
+        const response = await axios.put(url, {
+          x: x,
+          y: y,
+          alive: true,
+        });
+        const entity = response.data.data;
+        console.log(entity);
+      } catch (error) {
+        console.log("Error fetching entities", error);
       }
     }
   };
@@ -340,7 +341,8 @@ const Home = () => {
             {},
             JSON.stringify({ entityId: currentEntity.id, playerId: playerId })
           );
-          setEntityXY();
+          console.log("Entity killed", currentEntity.id);
+          setEntityXY(currentEntity.id);
         }
       }
     }
@@ -351,13 +353,13 @@ const Home = () => {
   };
 
   const [formData, setFormData] = useState({
-    name: "",
+    name: " ",
     x: 0,
     y: 0,
     lvl: 1,
     alive: true,
     respawnTime: 0,
-    image: "",
+    image: " ",
   });
 
   const handleChange = (e) => {
@@ -375,7 +377,7 @@ const Home = () => {
       const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${entityId}`;
       const { formData: res } = await axios.put(url, formData);
       console.log(res);
-
+      setIsOpen(false);
     } catch (err) {
       console.log(err);
     }
@@ -387,9 +389,6 @@ const Home = () => {
   return (
     <div className={styles.container}>
       <div className={styles.baner}></div>
-      {/*<div className={styles.title}>
-        <h1>Twój poziom: {actualLevel}</h1>
-  </div>*/}
       <div className={styles.chatContainer}>
         {stompClient && actualPlayer.nick && (
           <Chat socket={stompClient} actualPlayerNick={actualPlayer.nick} />
@@ -430,8 +429,8 @@ const Home = () => {
                 onClick={() => {
                   setEntityId(entity.id);
                   handleEntityClick();
-                }
-                }
+                  setFormData(entity);
+                }}
               ></div>
             ))
           : null}
@@ -450,91 +449,91 @@ const Home = () => {
         onRequestClose={() => setIsOpen(false)}
         contentLabel="Example Modal"
         className={styles.modal_container}
-
       >
         <h2 className={styles.modal_title}>Edit Entity {entityId}</h2>
         <form className={styles.modal_form} onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Name:
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          X:
-          <input
-            type="number"
-            name="x"
-            value={formData.x}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            X:
+            <input
+              type="number"
+              name="x"
+              value={formData.x}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          Y:
-          <input
-            type="number"
-            name="y"
-            value={formData.y}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Y:
+            <input
+              type="number"
+              name="y"
+              value={formData.y}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          Level:
-          <input
-            type="number"
-            name="lvl"
-            value={formData.lvl}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Level:
+            <input
+              type="number"
+              name="lvl"
+              value={formData.lvl}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          Alive:
-          <input
-            type="checkbox"
-            name="alive"
-            checked={formData.alive}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Alive:
+            <input
+              type="checkbox"
+              name="alive"
+              checked={formData.alive}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          Respawn Time:
-          <input
-            type="number"
-            name="respawnTime"
-            value={formData.respawnTime}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Respawn Time:
+            <input
+              type="number"
+              name="respawnTime"
+              value={formData.respawnTime}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <label>
-          Image:
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
+          <label>
+            Image:
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
 
-        <button type="submit">Submit</button>
-        <button className={styles.btn_close} onClick={() => setIsOpen(false)}>close</button>
-
-      </form>
+          <button type="submit">Submit</button>
+          <button className={styles.btn_close} onClick={() => setIsOpen(false)}>
+            close
+          </button>
+        </form>
       </Modal>
     </div>
   );

@@ -18,10 +18,15 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Entities updateEntity(String id, Entities entity) {
-        Entities entityToUpdate = entityRepository.findById(id).get();
+    public Entities updateEntity(Entities entity) {
+        Entities entityToUpdate = entityRepository.findById(entity.getId()).get();
         entityToUpdate.setX(entity.getX());
         entityToUpdate.setY(entity.getY());
+        entityToUpdate.setName(entity.getName());
+        entityToUpdate.setLvl(entity.getLvl());
+        entityToUpdate.setAlive(entity.isAlive());
+        entityToUpdate.setRespawnTime(entity.getRespawnTime());
+        entityToUpdate.setImage(entity.getImage());
         return entityRepository.save(entityToUpdate);
     }
 
