@@ -29,7 +29,6 @@ const AddEntity = () => {
       const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities`;
       const { formData: res } = await axios.post(url, formData);
       console.log(res);
-
     } catch (err) {
       console.log(err);
     }
@@ -42,6 +41,7 @@ const AddEntity = () => {
         <label>
           Name:
           <input
+            className={styles.input}
             type="text"
             name="name"
             value={formData.name}
@@ -53,6 +53,7 @@ const AddEntity = () => {
         <label>
           X:
           <input
+            className={styles.input}
             type="number"
             name="x"
             value={formData.x}
@@ -64,6 +65,7 @@ const AddEntity = () => {
         <label>
           Y:
           <input
+            className={styles.input}
             type="number"
             name="y"
             value={formData.y}
@@ -75,6 +77,7 @@ const AddEntity = () => {
         <label>
           Level:
           <input
+            className={styles.input}
             type="number"
             name="lvl"
             value={formData.lvl}
@@ -86,6 +89,7 @@ const AddEntity = () => {
         <label>
           Alive:
           <input
+            className={styles.input}
             type="checkbox"
             name="alive"
             checked={formData.alive}
@@ -97,6 +101,7 @@ const AddEntity = () => {
         <label>
           Respawn Time:
           <input
+            className={styles.input}
             type="number"
             name="respawnTime"
             value={formData.respawnTime}
@@ -108,6 +113,7 @@ const AddEntity = () => {
         <label>
           Image:
           <input
+            className={styles.input}
             type="text"
             name="image"
             value={formData.image}
@@ -116,7 +122,9 @@ const AddEntity = () => {
         </label>
         <br />
 
-        <button type="submit">Submit</button>
+        <button className={styles.button} type="submit">
+          Submit
+        </button>
       </form>
     </div>
   );

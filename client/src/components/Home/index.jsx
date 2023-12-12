@@ -25,6 +25,7 @@ const Home = () => {
   const actualPlayerRef = useRef(null);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [entityId, setEntityId] = useState(0);
+  
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -305,9 +306,14 @@ const Home = () => {
       try {
         const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${currentEntity.id}`;
         const response = await axios.put(url, {
+          id: currentEntity.id,
+          name: currentEntity.name,
           x: x,
           y: y,
+          lvl: currentEntity.lvl,
           alive: true,
+          respawnTime: currentEntity.respawnTime,
+          image: currentEntity.image,
         });
         const entity = response.data.data;
         console.log(entity);
@@ -443,6 +449,7 @@ const Home = () => {
             actualLevel={actualLevel}
           />
         )}
+        
       </div>
       <Modal
         isOpen={modalIsOpen}

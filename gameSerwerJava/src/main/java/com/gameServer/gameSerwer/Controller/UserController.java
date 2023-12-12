@@ -20,7 +20,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin
-
 public class UserController {
     @Autowired
     private UserService userService;
@@ -48,7 +47,6 @@ public class UserController {
             Optional<User> existingUser = userService.getAllUsers().stream()
                     .filter(u -> u.getNick().equals(user.getNick()))
                     .findFirst();
-
 
             if (existingUser.isPresent()) {
                 System.out.println("User with this nick already exists");

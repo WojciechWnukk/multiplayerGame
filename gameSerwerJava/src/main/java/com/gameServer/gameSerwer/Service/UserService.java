@@ -8,6 +8,7 @@ import java.util.Optional;
 
 
 public interface UserService {
+
     List<User> getAllUsers();
 
     User addUser(User user);
@@ -15,6 +16,8 @@ public interface UserService {
     String hashPassword(String password);
 
     Boolean loginValidation(String email, String password);
+
+    Boolean registerValidation(String email, String password, String nick);
 
     User updateUserPosition(User user);
 
@@ -25,4 +28,6 @@ public interface UserService {
     ResponseEntity<?> updateUserLvl(User user);
 
     ResponseEntity<?> updateUserOnline(User user, Boolean online);
+
+
 }

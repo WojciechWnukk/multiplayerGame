@@ -43,8 +43,8 @@ public class UserServiceTest {
     public void getAllUsers_shouldReturnListOfUsers() {
         System.out.println(userService.getAllUsers());
         // Arrange
-        User user = new User("1", "user1", 0, 0, 1, true, "email", "password");
-        User user2 = new User("2", "user2", 0, 0, 1, true, "email2", "password2");
+        User user = new User("1", "user1", 0, 0, 1, true, "email@w.pl", "passwor@wd");
+        User user2 = new User("2", "user2", 0, 0, 1, true, "email2@w.pl", "passsawword2");
 
         userService.addUser(user);
         userService.addUser(user2);
@@ -87,7 +87,7 @@ public class UserServiceTest {
     public void loginValidation() {
 
         // Act & Assert
-        assertTrue(userService.loginValidation("nonEmptyEmail", "nonEmptyPassword"));
+        assertTrue(userService.loginValidation("nonEmptyEmail@wp.pl", "nonEmptyPassword"));
 
         assertFalse(userService.loginValidation("", "password"));
         assertFalse(userService.loginValidation("email", ""));
