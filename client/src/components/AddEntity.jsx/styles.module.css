@@ -1,4 +1,4 @@
- /*
+
  .container {
     background-color: #333;
     color: #fff;
@@ -10,7 +10,7 @@
     margin: 0;
   }
   
-  form {
+  .form {
     background-color: #444;
     padding: 20px;
     border-radius: 10px;
@@ -22,7 +22,7 @@
     margin-bottom: 10px;
   }
   
-  input {
+  .input {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -32,7 +32,7 @@
     color: #fff;
   }
   
-  button {
+  .button {
     background-color: #00bcd4;
     color: #fff;
     padding: 10px 20px;
@@ -45,4 +45,3 @@
   button:hover {
     background-color: #008c9e;
   }
-   */

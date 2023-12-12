@@ -117,3 +117,15 @@
     background-color: #0056b3;
 }
 
+.btn_logout {
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn_logout:hover {
+    background-color: #0056b3;
+}

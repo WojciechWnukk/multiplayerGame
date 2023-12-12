@@ -25,7 +25,6 @@ const Signup = () => {
             const url = `${process.env.REACT_APP_DEV_SERVER}/api/users`
             const { data: res } = await axios.post(url, data)
             console.log("tutaj wchodzi", res)
-            localStorage.setItem("playerId", res) //nie wiem jak wysyłać dane z backendu do frontendu jako całość
             navigate("/login")
             console.log("res" + res.message)
 
