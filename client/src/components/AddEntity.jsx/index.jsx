@@ -13,6 +13,8 @@ const AddEntity = () => {
     image: "",
   });
 
+  const playerId = localStorage.getItem("playerId");
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -26,7 +28,7 @@ const AddEntity = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities`;
+      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${playerId}`;
       const { formData: res } = await axios.post(url, formData);
       console.log(res);
     } catch (err) {
