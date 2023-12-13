@@ -38,7 +38,29 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Entities addEntity(@Valid Entities entity) {
+    public Entities updateEntityByForm(@Valid Entities entity, String playerRole) {
+
+        if (!playerRole.equals("Admin")) {
+            throw new IllegalArgumentException("You don't have permission to update entity");
+        }
+        validateEntity(entity);
+
+        Entities entityToUpdate = entityRepository.findById(entity.getId()).get();
+        entityToUpdate.setX(entity.getX());
+        entityToUpdate.setY(entity.getY());
+        entityToUpdate.setName(entity.getName());
+        entityToUpdate.setLvl(entity.getLvl());
+        entityToUpdate.setAlive(entity.isAlive());
+        entityToUpdate.setRespawnTime(entity.getRespawnTime());
+        entityToUpdate.setImage(entity.getImage());
+        return entityRepository.save(entityToUpdate);
+    }
+
+    @Override
+    public Entities addEntity(@Valid Entities entity, String playerRole) {
+        if (!playerRole.equals("Admin")) {
+            throw new IllegalArgumentException("You don't have permission to add entity");
+        }
         validateEntity(entity);
         return entityRepository.save(entity);
     }

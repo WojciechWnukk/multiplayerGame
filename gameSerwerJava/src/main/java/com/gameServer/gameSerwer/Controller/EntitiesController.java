@@ -34,9 +34,10 @@ public class EntitiesController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @PostMapping
-    public ResponseEntity<?> addEntity(@RequestBody Entities entity) {
+    @PostMapping("/{playerId}")
+    public ResponseEntity<?> addEntity(@RequestBody Entities entity, @PathVariable String playerId) {
         try {
+
             Optional<Entities> existingEntity = entityService.getAllEntities().stream()
                     .filter(e -> e.getName().equals(entity.getName()))
                     .findFirst();
@@ -45,8 +46,11 @@ public class EntitiesController {
                 System.out.println("Entity with this name already exists");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Entity with this name already exists");
             }
+            User player = userService.getUserById(playerId).orElseThrow(() -> new Exception("Player not found"));
+            String playerRole = player.getRoles();
 
-            Entities newEntity = entityService.addEntity(entity);
+
+            Entities newEntity = entityService.addEntity(entity, playerRole);
             System.out.println("Entity added" + newEntity);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(newEntity);
@@ -74,6 +78,27 @@ public class EntitiesController {
                     .orElseThrow(() -> new Exception("Entity not found"));
 
             Entities updatedEntity = entityService.updateEntity(entity);
+            messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
+            System.out.println("Entity updated" + updatedEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/form/{playerId}")
+    public ResponseEntity<?> updateEntityByForm(@PathVariable String playerId, @RequestBody Entities entity) {
+        try {
+            String entityId = entity.getId();
+            Entities existingEntity = entityService.getAllEntities().stream()
+                    .filter(e -> e.getId().equals(entityId))
+                    .findFirst()
+                    .orElseThrow(() -> new Exception("Entity not found"));
+
+            User player = userService.getUserById(playerId).orElseThrow(() -> new Exception("Player not found"));
+            String playerRole = player.getRoles();
+            Entities updatedEntity = entityService.updateEntityByForm(entity, playerRole);
             messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
             System.out.println("Entity updated" + updatedEntity);
             return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
