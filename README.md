@@ -10,3 +10,4 @@ Some examples of functionality:
 - player lvls
 - editing entities data
 - adding new entity
+- chat
