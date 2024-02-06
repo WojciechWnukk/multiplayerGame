@@ -25,7 +25,6 @@ const Home = () => {
   const actualPlayerRef = useRef(null);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [entityId, setEntityId] = useState(0);
-  
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
