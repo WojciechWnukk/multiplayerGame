@@ -7,6 +7,7 @@ import java.util.List;
 public interface EntityService {
     List<Entities> getAllEntities();
     Entities updateEntity(Entities entity);
-    Entities addEntity(Entities entity);
+    Entities addEntity(Entities entity, String playerRole);
+    Entities updateEntityByForm(Entities entity, String playerRole);
 
 }

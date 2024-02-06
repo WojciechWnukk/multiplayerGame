@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @ToString
 public class User {
     private String id;
@@ -18,10 +18,23 @@ public class User {
     private boolean online;
     private String email;
     private String password;
+    private String roles;
 
     public Boolean getOnline() {
         return online;
     }
 
+
+    public User(String id, String nick, int x, int y, int lvl, boolean online, String email, String password) {
+        this.id = id;
+        this.nick = nick;
+        this.x = x;
+        this.y = y;
+        this.lvl = lvl;
+        this.online = online;
+        this.email = email;
+        this.password = password;
+        this.roles = "User";
+    }
 
 }

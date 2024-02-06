@@ -25,7 +25,6 @@ const Home = () => {
   const actualPlayerRef = useRef(null);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [entityId, setEntityId] = useState(0);
-  
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -380,7 +379,7 @@ const Home = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${entityId}`;
+      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/form/${playerId}`;
       const { formData: res } = await axios.put(url, formData);
       console.log(res);
       setIsOpen(false);
