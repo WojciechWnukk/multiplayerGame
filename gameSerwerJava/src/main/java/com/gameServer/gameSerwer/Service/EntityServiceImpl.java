@@ -34,6 +34,7 @@ public class EntityServiceImpl implements EntityService {
         entityToUpdate.setAlive(entity.isAlive());
         entityToUpdate.setRespawnTime(entity.getRespawnTime());
         entityToUpdate.setImage(entity.getImage());
+        entityToUpdate.setType(entity.getType());
         return entityRepository.save(entityToUpdate);
     }
 
@@ -53,6 +54,7 @@ public class EntityServiceImpl implements EntityService {
         entityToUpdate.setAlive(entity.isAlive());
         entityToUpdate.setRespawnTime(entity.getRespawnTime());
         entityToUpdate.setImage(entity.getImage());
+        entityToUpdate.setType(entity.getType());
         return entityRepository.save(entityToUpdate);
     }
 

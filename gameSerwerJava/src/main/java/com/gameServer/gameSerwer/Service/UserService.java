@@ -27,6 +27,8 @@ public interface UserService {
 
     ResponseEntity<?> updateUserLvl(User user);
 
+    ResponseEntity<?> updateUserHealth(User user, String entityId);
+
     ResponseEntity<?> updateUserOnline(User user, Boolean online);
 
 

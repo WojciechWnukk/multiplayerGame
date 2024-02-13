@@ -1,6 +1,8 @@
 package com.gameServer.gameSerwer.Service;
 
+import com.gameServer.gameSerwer.Model.Entities;
 import com.gameServer.gameSerwer.Model.User;
+import com.gameServer.gameSerwer.Repository.EntityRepository;
 import com.gameServer.gameSerwer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userrepository;
+
+    @Autowired
+    private EntityRepository entityrepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -107,6 +112,31 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             System.out.println("Error while updating user level");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserHealth(User user, String entityId) {
+        try {
+            Optional<User> optionalUser = userrepository.findById(user.getId());
+            Optional<Entities> optionalEntity = entityrepository.findById(entityId);
+
+            if (optionalUser.isPresent() && optionalEntity.isPresent()) {
+                User userToUpdate = optionalUser.get();
+                int points = optionalEntity.get().getType().equals("monster") ? 10 : -10;
+                if(user.getHealth() - points < 0 || user.getHealth() - points > 100) {
+                    return ResponseEntity.ok().body(userToUpdate);
+                }
+                userToUpdate.setHealth(user.getHealth() - points);
+                System.out.println("User health updated" + userToUpdate);
+                userrepository.save(userToUpdate);
+                return ResponseEntity.ok().body(userToUpdate);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            System.out.println("Error while updating user health");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
