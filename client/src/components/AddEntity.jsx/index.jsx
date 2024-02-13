@@ -11,6 +11,7 @@ const AddEntity = () => {
     alive: true,
     respawnTime: 0,
     image: "",
+    type: "monster"
   });
 
   const playerId = localStorage.getItem("playerId");
@@ -121,6 +122,20 @@ const AddEntity = () => {
             value={formData.image}
             onChange={handleChange}
           />
+        </label>
+        <br />
+
+        <label>
+          Type:
+          <select
+            className={styles.input}
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+          >
+            <option value="monster">Monster</option>
+            <option value="npc">NPC</option>
+          </select>
         </label>
         <br />
 

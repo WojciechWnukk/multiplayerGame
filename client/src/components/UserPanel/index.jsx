@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styles from "./styles.module.css";
-const UserPanel = ({ socket, actualPlayerNick, actualLevel }) => {
+const UserPanel = ({ socket, actualPlayerNick, actualLevel, playerHp }) => {
   const playerId = localStorage.getItem("playerId");
 
   return (
     <div className={styles.userPanelContainer}>
       <div className={styles.userData}>
         <h2>
-          {actualPlayerNick} {actualLevel}lvl
+          {actualPlayerNick} {actualLevel}lvl <br />
+          <div className={styles.playerHp}>{playerHp} % </div>
         </h2>
       </div>
       <div className={styles.userInventory}></div>

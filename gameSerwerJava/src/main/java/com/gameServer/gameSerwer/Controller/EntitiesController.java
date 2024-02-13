@@ -123,6 +123,7 @@ public class EntitiesController {
             Optional<User> userOptional = userService.getUserById(playerId);
             userOptional.ifPresent(user -> {
                 userService.updateUserLvl(user);
+                userService.updateUserHealth(user, entityId);
             });
             //lvl increase
             UserController userController = new UserController(messagingTemplate);

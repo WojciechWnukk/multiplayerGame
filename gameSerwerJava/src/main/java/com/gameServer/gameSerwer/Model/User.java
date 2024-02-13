@@ -19,6 +19,7 @@ public class User {
     private String email;
     private String password;
     private String roles;
+    private int health;
 
     public Boolean getOnline() {
         return online;
@@ -35,6 +36,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.roles = "User";
+        this.health = 100;
     }
 
 }

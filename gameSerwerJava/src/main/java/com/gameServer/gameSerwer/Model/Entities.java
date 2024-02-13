@@ -18,5 +18,5 @@ public class Entities {
     private boolean alive;
     private int respawnTime;
     private String image;
-
+    private String type;
 }

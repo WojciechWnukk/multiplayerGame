@@ -25,6 +25,7 @@ const Home = () => {
   const actualPlayerRef = useRef(null);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [entityId, setEntityId] = useState(0);
+  const [playerHealth, setPlayerHealth] = useState(1);
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -52,7 +53,6 @@ const Home = () => {
   const onMessageReceived = (payload) => {
     try {
       const responseData = JSON.parse(payload.body);
-
       if (responseData && responseData.body && responseData.body.data) {
         const updatedPlayers = responseData.body.data;
         setPlayers(updatedPlayers);
@@ -61,11 +61,12 @@ const Home = () => {
         actualPlayerRef.current = player;
 
         setActualLevel(player.lvl);
+        setPlayerHealth(player.health);
         setPlayers(updatedPlayers);
       } else {
         console.error(
           "Nieprawidłowa struktura danych w odpowiedzi:",
-          responseData
+          responseData,
         );
       }
     } catch (error) {
@@ -128,12 +129,14 @@ const Home = () => {
       setPlayerPosition({ x: player.x, y: player.y });
       setActualLevel(player.lvl);
       setActualPlayer(player);
+      setPlayerHealth(player.health);
       setSocketData({
         playerId: playerId,
         x: player.x,
         y: player.y,
         lvl: player.lvl,
         online: true,
+        health: playerHealth,
       });
 
       console.log("Gram na ", player);
@@ -163,6 +166,7 @@ const Home = () => {
         y: checkedY,
         lvl: actualLevel,
         online: true,
+        health: playerHealth,
       }));
       console.log("Data" + socketData);
     } catch (error) {
@@ -198,8 +202,7 @@ const Home = () => {
 
       const isInputFocused = document.activeElement.tagName === "INPUT";
 
-      // Jeśli fokus jest na polu do wpisywania, przerwij obsługę klawiszy
-      if (isInputFocused) {
+      if (isInputFocused || modalIsOpen) {
         return;
       }
 
@@ -313,6 +316,7 @@ const Home = () => {
           alive: true,
           respawnTime: currentEntity.respawnTime,
           image: currentEntity.image,
+          type: currentEntity.type,
         });
         const entity = response.data.data;
         console.log(entity);
@@ -365,6 +369,7 @@ const Home = () => {
     alive: true,
     respawnTime: 0,
     image: " ",
+    type: "monster",
   });
 
   const handleChange = (e) => {
@@ -426,7 +431,7 @@ const Home = () => {
               <div
                 key={`entity-${index}`}
                 className={
-                  entity.alive === true ? styles.entity : styles.entity_disabled
+                  entity.alive === true ? (entity.type==="monster" ? styles.entity : styles.npc) : styles.entity_disabled
                 }
                 style={{
                   transform: `translate(${entity.x}px, ${entity.y}px)`,
@@ -446,6 +451,7 @@ const Home = () => {
             socket={stompClient}
             actualPlayerNick={actualPlayer.nick}
             actualLevel={actualLevel}
+            playerHp={playerHealth}
           />
         )}
         
@@ -453,7 +459,7 @@ const Home = () => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setIsOpen(false)}
-        contentLabel="Example Modal"
+        contentLabel="Modal"
         className={styles.modal_container}
       >
         <h2 className={styles.modal_title}>Edit Entity {entityId}</h2>
