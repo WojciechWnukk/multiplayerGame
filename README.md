@@ -11,3 +11,4 @@ Some examples of functionality:
 - editing entities data
 - adding new entity
 - chat
+- player heal system and npc
