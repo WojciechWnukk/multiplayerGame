@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./styles.module.css";
+import HealthBar from "../HealthBar";
 const UserPanel = ({ socket, actualPlayerNick, actualLevel, playerHp }) => {
   const playerId = localStorage.getItem("playerId");
 
@@ -8,7 +9,7 @@ const UserPanel = ({ socket, actualPlayerNick, actualLevel, playerHp }) => {
       <div className={styles.userData}>
         <h2>
           {actualPlayerNick} {actualLevel}lvl <br />
-          <div className={styles.playerHp}>{playerHp} % </div>
+          <HealthBar hp={playerHp} />
         </h2>
       </div>
       <div className={styles.userInventory}></div>

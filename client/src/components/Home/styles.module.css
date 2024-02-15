@@ -42,17 +42,14 @@
 
 .player {
     position: absolute;
-    width: 36px;
-    height: 36px;
-    background-color: #4caf50;
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out, transform 0.1s ease-in-out;
-    /* Tutaj po przecinku definiujemy obie animacje */
-    border: 2px solid #000;
-    border-radius: 50%;
+    background-image: url(Player.png);
+
 }
 
 .player:hover {
@@ -209,14 +206,8 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e74c3c;
-    /* Kolor kwadratu */
+    background-image: url(monster.png);
 
-    /* Dodaj background-image dla tej klasy */
-    /*background-image: url(https://micc.garmory-cdn.cloud/obrazki/npc/tyt/ice_king.gif);*/
-    background-size: 90px 140px;
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 .entity:hover {
@@ -230,10 +221,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #d6e80e;
-    background-size: 90px 140px;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url(pixil-frame-0.png);
 }
 
 .userPanelContainer {

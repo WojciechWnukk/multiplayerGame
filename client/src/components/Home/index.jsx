@@ -422,7 +422,7 @@ const Home = () => {
                   }px)`,
                   transition: "transform 0.1s ease-in-out", // Dodaj animację CSS
                 }}
-                title={`Poziom gracza: ${player.lvl}`}
+                title={`Poziom gracza ${player.nick}: ${player.lvl}lvl`}
               ></div>
             ))
           : null}
