@@ -1,4 +1,5 @@
-![image](https://github.com/WojciechWnukk/multiplayerGame/assets/131540870/c3309298-90ac-4585-8ca2-5931ff58ad83)
+![image](https://github.com/WojciechWnukk/multiplayerGame/assets/131540870/515a71f6-be98-4fd7-9d61-2ad2d2db4cc1)
+
 
 MultiplayerGame
 
