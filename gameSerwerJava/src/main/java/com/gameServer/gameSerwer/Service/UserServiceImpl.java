@@ -96,25 +96,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public ResponseEntity<?> updateUserLvl(User user) {
-        try {
-            Optional<User> optionalUser = userrepository.findById(user.getId());
-
-            if (optionalUser.isPresent()) {
-                User userToUpdate = optionalUser.get();
-                userToUpdate.setLvl(user.getLvl() + 1);
-                System.out.println("User level updated" + userToUpdate);
-                userrepository.save(userToUpdate);
-                return ResponseEntity.ok().body(userToUpdate);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            System.out.println("Error while updating user level");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @Override
     public ResponseEntity<?> updateUserHealth(User user, String entityId) {
@@ -125,32 +106,52 @@ public class UserServiceImpl implements UserService {
             if (optionalUser.isPresent() && optionalEntity.isPresent()) {
                 User userToUpdate = optionalUser.get();
                 int points = optionalEntity.get().getType().equals("monster") ? 10 : -10;
-                if(user.getHealth() - points < 0 || user.getHealth() - points > 100) {
+                if (user.getHealth() - points < 0 || user.getHealth() - points > 100) {
                     return ResponseEntity.ok().body(userToUpdate);
                 }
                 userToUpdate.setHealth(user.getHealth() - points);
-                System.out.println("User health updated" + userToUpdate);
                 userrepository.save(userToUpdate);
                 return ResponseEntity.ok().body(userToUpdate);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            System.out.println("Error while updating user health");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserExp(User user, String entityId) {
+        try {
+            Optional<User> optionalUser = userrepository.findById(user.getId());
+            Optional<Entities> optionalEntities = entityrepository.findById(entityId);
+
+            if (optionalUser.isPresent() && optionalEntities.isPresent()) {
+                User userToUpdate = optionalUser.get();
+                int exp = optionalEntities.get().getType().equals("monster") ? optionalEntities.get().getLvl() * 15 : 0;
+                if (user.getExp() + exp >= 100) {
+                    userToUpdate.setLvl(user.getLvl() + 1);
+                    userToUpdate.setExp(0);
+                } else {
+                    userToUpdate.setExp(user.getExp() + exp);
+                }
+                userrepository.save(userToUpdate);
+                return ResponseEntity.ok().body(userToUpdate);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @Override
     public ResponseEntity<?> updateUserOnline(User user, Boolean online) {
-        System.out.println("User online updated" + user);
         try {
             user.setOnline(online);
-            System.out.println("User online updated" + user);
             userrepository.save(user);
             return ResponseEntity.ok().body(user);
         } catch (Exception e) {
-            System.out.println("Error while updating user online");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

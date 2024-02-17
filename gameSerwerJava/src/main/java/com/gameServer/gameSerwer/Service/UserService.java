@@ -25,11 +25,11 @@ public interface UserService {
 
     Optional<User> getUserById(String id);
 
-    ResponseEntity<?> updateUserLvl(User user);
-
     ResponseEntity<?> updateUserHealth(User user, String entityId);
 
     ResponseEntity<?> updateUserOnline(User user, Boolean online);
+
+    ResponseEntity<?> updateUserExp(User user, String entityId);
 
 
 }

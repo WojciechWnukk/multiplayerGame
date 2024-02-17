@@ -20,8 +20,6 @@ public class ChatServiceImpl implements ChatService {
             JSONObject json = new JSONObject(payload);
             String nick = json.getString("text");
             String message = json.getString("author");
-            System.out.println("nick: " + nick);
-            System.out.println("message: " + message);
 
             messagingTemplate.convertAndSend("/topic/chat", payload);
         } catch (JSONException e) {

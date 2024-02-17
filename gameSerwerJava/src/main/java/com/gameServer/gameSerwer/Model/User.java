@@ -15,6 +15,7 @@ public class User {
     private int x;
     private int y;
     private int lvl;
+    private int exp;
     private boolean online;
     private String email;
     private String password;
@@ -26,12 +27,13 @@ public class User {
     }
 
 
-    public User(String id, String nick, int x, int y, int lvl, boolean online, String email, String password) {
+    public User(String id, String nick, int x, int y, int lvl, int exp, boolean online, String email, String password) {
         this.id = id;
         this.nick = nick;
         this.x = x;
         this.y = y;
         this.lvl = lvl;
+        this.exp = exp;
         this.online = online;
         this.email = email;
         this.password = password;

@@ -27,9 +27,7 @@ public class AuthController {
         if (!existingUser.isPresent() || !BCrypt.checkpw(user.getPassword(), existingUser.get().getPassword()) || userService.loginValidation(user.getEmail(), user.getPassword()) == false) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(existingUser.get().getId());
-
     }
 }
 

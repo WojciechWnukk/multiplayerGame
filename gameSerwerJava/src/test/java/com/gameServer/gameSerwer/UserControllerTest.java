@@ -32,8 +32,8 @@ public class UserControllerTest {
     public void getAllUsers_ReturnsListOfUsers() throws Exception {
         // Arrange
         List<User> mockUsers = Arrays.asList(
-                new User("1", "user1", 0, 0, 1, true, "email", "password"),
-                new User("2", "user2", 0, 0, 1, true, "email", "password")
+                new User("1", "user1", 0, 0, 1, 33, true, "email", "password"),
+                new User("2", "user2", 0, 0, 1, 33, true, "email", "password")
         );
 
         Mockito.when(userService.getAllUsers()).thenReturn(mockUsers);
@@ -52,8 +52,8 @@ public class UserControllerTest {
     public void movePlayer_ExistingUser_ReturnsOkStatusAndUserId() throws Exception {
         // Arrange
         String playerId = "1";
-        User existingUser = new User(playerId, "user1", 0, 0, 1, true, "email", "password");
-        User updatedUser = new User(playerId, "user1", 10, 20, 1, true, "email", "password");
+        User existingUser = new User(playerId, "user1", 0, 0, 1, 33, true, "email", "password");
+        User updatedUser = new User(playerId, "user1", 10, 20, 1, 33, true, "email", "password");
 
         Mockito.when(userService.getAllUsers()).thenReturn(List.of(existingUser));
         Mockito.when(userService.updateUserPosition(Mockito.any(User.class))).thenReturn(updatedUser);
@@ -70,7 +70,7 @@ public class UserControllerTest {
     public void deleteUser_ExistingUser_ReturnsOkStatusAndUserId() throws Exception {
         // Arrange
         String playerId = "1";
-        User existingUser = new User(playerId, "user1", 0, 0, 1, true, "email", "password");
+        User existingUser = new User(playerId, "user1", 0, 0, 1, 33, true, "email", "password");
 
         Mockito.when(userService.getAllUsers()).thenReturn(List.of(existingUser));
         Mockito.when(userService.deleteUser(Mockito.any(String.class))).thenReturn(true);
