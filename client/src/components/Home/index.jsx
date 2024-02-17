@@ -26,6 +26,7 @@ const Home = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [entityId, setEntityId] = useState(0);
   const [playerHealth, setPlayerHealth] = useState(1);
+  const [playerExp, setPlayerExp] = useState(1);
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -62,6 +63,7 @@ const Home = () => {
 
         setActualLevel(player.lvl);
         setPlayerHealth(player.health);
+        setPlayerExp(player.exp);
         setPlayers(updatedPlayers);
       } else {
         console.error(
@@ -130,11 +132,13 @@ const Home = () => {
       setActualLevel(player.lvl);
       setActualPlayer(player);
       setPlayerHealth(player.health);
+      setPlayerExp(player.exp);
       setSocketData({
         playerId: playerId,
         x: player.x,
         y: player.y,
         lvl: player.lvl,
+        exp: playerExp,
         online: true,
         health: playerHealth,
       });
@@ -165,6 +169,7 @@ const Home = () => {
         x: checkedX,
         y: checkedY,
         lvl: actualLevel,
+        exp: playerExp,
         online: true,
         health: playerHealth,
       }));
@@ -420,7 +425,7 @@ const Home = () => {
                   }px, ${
                     player.id === playerId ? playerPosition.y : player.y
                   }px)`,
-                  transition: "transform 0.1s ease-in-out", // Dodaj animację CSS
+                  transition: "transform 0.1s ease-in-out",
                 }}
                 title={`Poziom gracza ${player.nick}: ${player.lvl}lvl`}
               ></div>
@@ -452,6 +457,7 @@ const Home = () => {
             actualPlayerNick={actualPlayer.nick}
             actualLevel={actualLevel}
             playerHp={playerHealth}
+            playerExp={playerExp}
           />
         )}
         

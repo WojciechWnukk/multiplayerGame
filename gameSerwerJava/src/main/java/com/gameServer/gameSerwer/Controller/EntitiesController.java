@@ -79,7 +79,7 @@ public class EntitiesController {
 
             Entities updatedEntity = entityService.updateEntity(entity);
             messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
-            System.out.println("Entity updated" + updatedEntity);
+            //System.out.println("Entity updated" + updatedEntity);
             return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
 
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class EntitiesController {
             String playerRole = player.getRoles();
             Entities updatedEntity = entityService.updateEntityByForm(entity, playerRole);
             messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
-            System.out.println("Entity updated" + updatedEntity);
+            //System.out.println("Entity updated" + updatedEntity);
             return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
 
         } catch (Exception e) {
@@ -111,19 +111,17 @@ public class EntitiesController {
     @MessageMapping("killEntity")
     @SendTo("/topic/killEntity")
     public void killEntity(@Payload String payload) {
-        System.out.println("Killing...");
-
         try {
             JSONObject jsonObject = new JSONObject(payload);
             String entityId = jsonObject.getString("entityId");
             String playerId = jsonObject.getString("playerId");
 
-            System.out.println("Received killEntity message. Entity ID: " + entityId + ", Player ID: " + playerId);
+            //System.out.println("Received killEntity message. Entity ID: " + entityId + ", Player ID: " + playerId);
 
             Optional<User> userOptional = userService.getUserById(playerId);
             userOptional.ifPresent(user -> {
-                userService.updateUserLvl(user);
                 userService.updateUserHealth(user, entityId);
+                userService.updateUserExp(user, entityId);
             });
             //lvl increase
             UserController userController = new UserController(messagingTemplate);

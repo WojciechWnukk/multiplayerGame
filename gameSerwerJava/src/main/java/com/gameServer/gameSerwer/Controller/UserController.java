@@ -73,11 +73,11 @@ public class UserController {
                     .findFirst()
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this id not found"));
 
-                User updatedUser = userService.updateUserPosition(user);
-                messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
+            User updatedUser = userService.updateUserPosition(user);
+            messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
 
-                System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
-                return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
+            //System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -91,8 +91,8 @@ public class UserController {
                     .findFirst()
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this id not found"));
 
-                userService.deleteUser(playerId);
-                return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+            userService.deleteUser(playerId);
+            return ResponseEntity.status(HttpStatus.OK).body("User deleted");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -102,7 +102,6 @@ public class UserController {
     @MessageMapping("connection")
     @SendTo("/topic/connection")
     public void connectPlayer(@Payload String payload) {
-        System.out.println("Connected..." + payload.toString());
         try {
             JSONObject jsonObject = new JSONObject(payload);
             String playerId = jsonObject.getString("playerId");
@@ -121,7 +120,6 @@ public class UserController {
     @MessageMapping("disconnectPlayer")
     @SendTo("/topic/disconnectPlayer")
     public void disconnectPlayer(@Payload String payload) {
-        System.out.println("Disconnecting..." + payload);
         try {
             JSONObject jsonObject = new JSONObject(payload);
             String playerId = jsonObject.getString("playerId");

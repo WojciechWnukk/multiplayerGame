@@ -1,7 +1,6 @@
 import styles from "./styles.module.css";
 
 const HealthBarAction = ({ maxHp = 100, hp }) => {
-    console.log(hp + " " + maxHp)
   const barWidth = (hp / maxHp) * 100;
   return (
     <div>
@@ -21,8 +20,6 @@ const HealthBarAction = ({ maxHp = 100, hp }) => {
           {hp}%
         </div>
       </div>
-
-      <br />
     </div>
   );
 };

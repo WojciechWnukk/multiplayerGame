@@ -43,8 +43,8 @@ public class UserServiceTest {
     public void getAllUsers_shouldReturnListOfUsers() {
         System.out.println(userService.getAllUsers());
         // Arrange
-        User user = new User("1", "user1", 0, 0, 1, true, "email@w.pl", "passwor@wd");
-        User user2 = new User("2", "user2", 0, 0, 1, true, "email2@w.pl", "passsawword2");
+        User user = new User("1", "user1", 0, 0, 1, 33, true, "email@w.pl", "passwor@wd");
+        User user2 = new User("2", "user2", 0, 0, 1, 33, true, "email2@w.pl", "passsawword2");
 
         userService.addUser(user);
         userService.addUser(user2);
@@ -60,11 +60,11 @@ public class UserServiceTest {
     @Test
     public void movePlayer_shouldUpdateUserPosition() {
         // Arrange
-        User user = new User("1", "user1", 0, 0, 1, true, "email", "password");
+        User user = new User("1", "user1", 0, 0, 1, 33, true, "email", "password");
 
         userService.addUser(user);
 
-        User userUpdated = new User("1", "user1", 40, 40, 1, true, "email", "password");
+        User userUpdated = new User("1", "user1", 40, 40, 1, 33, true, "email", "password");
 
 
         assertEquals(0, user.getX());
