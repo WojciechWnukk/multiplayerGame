@@ -1,4 +1,5 @@
-![image](https://github.com/WojciechWnukk/multiplayerGame/assets/131540870/515a71f6-be98-4fd7-9d61-2ad2d2db4cc1)
+![image](https://github.com/WojciechWnukk/multiplayerGame/assets/131540870/debc2e17-db9e-4db7-9935-bc4302e04d6d)
+
 
 
 MultiplayerGame
@@ -8,7 +9,7 @@ Some examples of functionality:
 - changing players positions with websocket synchronization
 - killing entities
 - random entity respawning position
-- player lvls
+- player exp and lvls
 - editing entities data
 - adding new entity
 - chat
