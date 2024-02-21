@@ -49,7 +49,6 @@ public class UserController {
                     .findFirst();
 
             if (existingUser.isPresent()) {
-                System.out.println("User with this nick already exists");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this nick already exists");
             }
 
@@ -76,7 +75,6 @@ public class UserController {
             User updatedUser = userService.updateUserPosition(user);
             messagingTemplate.convertAndSend("/topic/playerPosition", getAllUsers());
 
-            //System.out.println("Aktualizacja pozycji gracza" + updatedUser.getX() + updatedUser.getY() + updatedUser.getId() + updatedUser.toString());
             return ResponseEntity.status(HttpStatus.OK).body(updatedUser.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
