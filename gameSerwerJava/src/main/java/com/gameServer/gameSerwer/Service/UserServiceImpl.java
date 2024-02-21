@@ -1,5 +1,6 @@
 package com.gameServer.gameSerwer.Service;
 
+import com.gameServer.gameSerwer.Controller.EntitiesController;
 import com.gameServer.gameSerwer.Model.Entities;
 import com.gameServer.gameSerwer.Model.User;
 import com.gameServer.gameSerwer.Repository.EntityRepository;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EntityRepository entityrepository;
+
 
     @Override
     public List<User> getAllUsers() {
@@ -105,12 +107,21 @@ public class UserServiceImpl implements UserService {
 
             if (optionalUser.isPresent() && optionalEntity.isPresent()) {
                 User userToUpdate = optionalUser.get();
-                int points = optionalEntity.get().getType().equals("monster") ? 10 : -10;
-                if (user.getHealth() - points < 0 || user.getHealth() - points > 100) {
+                int points = optionalEntity.get().getType().equals("monster") ? 10*optionalEntity.get().getLvl() : -10;
+                if (user.getHealth() - points < 0) {
+                    respawnUser(userToUpdate);
+                    userToUpdate.setAlive(true);
+                    return ResponseEntity.ok().body(userToUpdate);
+                } else if(user.getHealth() - points > 100) {
+                    userToUpdate.setHealth(100);
+                    userrepository.save(userToUpdate);
+                    updateUserExp(user, entityId);
                     return ResponseEntity.ok().body(userToUpdate);
                 }
                 userToUpdate.setHealth(user.getHealth() - points);
                 userrepository.save(userToUpdate);
+                updateUserExp(user, entityId);
+
                 return ResponseEntity.ok().body(userToUpdate);
             } else {
                 return ResponseEntity.notFound().build();
@@ -128,10 +139,11 @@ public class UserServiceImpl implements UserService {
 
             if (optionalUser.isPresent() && optionalEntities.isPresent()) {
                 User userToUpdate = optionalUser.get();
-                int exp = optionalEntities.get().getType().equals("monster") ? optionalEntities.get().getLvl() * 15 : 0;
+                int exp = optionalEntities.get().getType().equals("monster") ? optionalEntities.get().getLvl() * 5 : 0;
                 if (user.getExp() + exp >= 100) {
                     userToUpdate.setLvl(user.getLvl() + 1);
                     userToUpdate.setExp(0);
+                    userToUpdate.setHealth(100);
                 } else {
                     userToUpdate.setExp(user.getExp() + exp);
                 }
@@ -154,6 +166,22 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    public void respawnUser(User user) {
+        user.setHealth(0);
+        user.setAlive(false);
+        userrepository.save(user);
+        new Thread(() -> {
+            try {
+                Thread.sleep(15000);
+                user.setAlive(true);
+                user.setHealth(1);
+                userrepository.save(user);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private boolean isXYValid(int x, int y) {

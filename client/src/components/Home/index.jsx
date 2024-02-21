@@ -27,6 +27,7 @@ const Home = () => {
   const [entityId, setEntityId] = useState(0);
   const [playerHealth, setPlayerHealth] = useState(1);
   const [playerExp, setPlayerExp] = useState(1);
+  const [playerAlive, setPlayerAlive] = useState();
 
   const connect = () => {
     let socket = new SockJS("http://localhost:8080/ws");
@@ -64,6 +65,7 @@ const Home = () => {
         setActualLevel(player.lvl);
         setPlayerHealth(player.health);
         setPlayerExp(player.exp);
+        setPlayerAlive(player.alive);
         setPlayers(updatedPlayers);
       } else {
         console.error(
@@ -415,7 +417,7 @@ const Home = () => {
               <div
                 key={player.id}
                 className={
-                  player.online === true
+                  player.online === true && player.alive === true
                     ? styles.player
                     : styles.player_disabled
                 }
@@ -552,6 +554,14 @@ const Home = () => {
             close
           </button>
         </form>
+      </Modal>
+
+      <Modal
+      isOpen={playerAlive === false}
+      className={styles.modal_container}
+      >
+        <h2>Umarłeś!</h2>
+        <button onClick={() => getPlayers()}>Zagraj ponownie za 15s</button>
       </Modal>
     </div>
   );
