@@ -14,3 +14,4 @@ Some examples of functionality:
 - adding new entity
 - chat
 - player heal system and npc
+- handling player death and respawn
