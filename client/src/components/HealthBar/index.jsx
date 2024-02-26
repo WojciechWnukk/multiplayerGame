@@ -27,7 +27,7 @@ const HealthBarAction = ({ maxHp = 100, hp }) => {
 export default function HealthBar({ hp }) {
   return (
     <div className={styles.App}>
-      <HealthBarAction hp = {hp} />
+      <HealthBarAction hp={hp} />
     </div>
   );
 }

@@ -1,56 +1,47 @@
-/* chat.css */
-
-/* Kontener główny */
-
-
-/* Lista wiadomości */
 .message_list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* Pojedyncza wiadomość */
 .message {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
-/* Autor wiadomości */
 .message_author {
-    font-weight: bold;
+  font-weight: bold;
 }
 
-/* Treść wiadomości */
 .message_text {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
-/* Pole wprowadzania wiadomości */
 .message_input {
-    display: flex;
-    flex-grow: 1; /* Rozciągnij pole wprowadzania na całą dostępną przestrzeń w kierunku kolumny (na dół) */
-    margin-top: 20px;
-    justify-content: space-between; /* Umieść elementy na końcach (na górze i na dole) */
+  display: flex;
+  flex-grow: 1;
+  margin-top: 20px;
+  justify-content: space-between;
 }
 
 .message_input input {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px; /* Możesz dostosować do własnych preferencji */
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .message_input button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    color: #fff;
-    cursor: pointer;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  color: #fff;
+  cursor: pointer;
 }
 
 .message_input button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }

@@ -88,7 +88,8 @@ public class EntitiesController {
     }
 
     @PutMapping("/form/{playerId}")
-    public ResponseEntity<?> updateEntityByForm(@PathVariable String playerId, @RequestBody Entities entity) {
+    public ResponseEntity<?> updateEntityByForm(@PathVariable("playerId") String playerId, @RequestBody Entities entity) {
+        System.out.println("Here! " + playerId + entity);
         try {
             String entityId = entity.getId();
             Entities existingEntity = entityService.getAllEntities().stream()
@@ -100,7 +101,6 @@ public class EntitiesController {
             String playerRole = player.getRoles();
             Entities updatedEntity = entityService.updateEntityByForm(entity, playerRole);
             messagingTemplate.convertAndSend("/topic/entities", getAllEntities());
-            //System.out.println("Entity updated" + updatedEntity);
             return ResponseEntity.status(HttpStatus.OK).body(existingEntity);
 
         } catch (Exception e) {

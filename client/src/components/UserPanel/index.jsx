@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./styles.module.css";
 import HealthBar from "../HealthBar";
 import ExpBar from "../ExpBar";
-const UserPanel = ({ socket, actualPlayerNick, actualLevel, playerHp, playerExp }) => {
-  const playerId = localStorage.getItem("playerId");
-
+const UserPanel = ({
+  actualPlayerNick,
+  actualLevel,
+  playerHp,
+  playerExp,
+}) => {
   return (
     <div className={styles.userPanelContainer}>
       <div className={styles.userData}>
         <h2>
           {actualPlayerNick} {actualLevel}lvl <br />
           <HealthBar hp={playerHp} />
-          <ExpBar exp={playerExp}/>
+          <ExpBar exp={playerExp} />
         </h2>
       </div>
       <div className={styles.userInventory}></div>

@@ -5,8 +5,6 @@ import Login from "./components/Login";
 import AddEntity from "./components/AddEntity.jsx";
 
 function App() {
-  const user = localStorage.getItem("token")
-
   return (
     <Router>
       <Routes>
@@ -14,7 +12,6 @@ function App() {
         <Route path="/signup" exact element={<Signup />} />
         <Route path="/login" exact element={<Login />} />
         <Route path="/addEntity" exact element={<AddEntity />} />
-        
       </Routes>
     </Router>
   );
