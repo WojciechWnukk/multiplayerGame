@@ -1,0 +1,50 @@
+.map {
+  position: relative;
+  width: 1820px;
+  /* Zmiana szerokości mapy, aby zajmować 80% dostępnej przestrzeni */
+  height: 800px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.player {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-image: url(Player.png);
+}
+
+.player:hover {
+  background-color: #2980b9;
+}
+.entity {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url(monster.png);
+}
+
+.entity:hover {
+  background-color: #c0392b;
+}
+
+.npc {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url(pixil-frame-0.png);
+}

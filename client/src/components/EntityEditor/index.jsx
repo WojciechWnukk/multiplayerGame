@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import styles from "./styles.module.css";
+import { useState } from "react";
+import styles from "../Home/styles.module.css";
 import axios from "axios";
+import Modal from "react-modal";
+Modal.setAppElement("#root");
 
-const AddEntity = () => {
+const EntityEditorAction = ({ entityId, isOpen, setIsOpen }) => {
   const [formData, setFormData] = useState({
+    id: entityId,
     name: "",
     x: 0,
     y: 0,
@@ -28,21 +31,26 @@ const AddEntity = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/${playerId}`;
-      await axios.post(url, formData);
+      const url = `${process.env.REACT_APP_DEV_SERVER}/api/entities/form/${playerId}`;
+      await axios.put(url, formData);
+      setIsOpen(false);
     } catch (err) {
       console.error(err);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <h1>Add Entity</h1>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={() => setIsOpen(false)}
+      contentLabel="Modal"
+      className={styles.modal_container}
+    >
+      <h2 className={styles.modal_title}>Edit Entity {entityId}</h2>
+      <form className={styles.modal_form} onSubmit={handleSubmit}>
         <label>
           Name:
           <input
-            className={styles.input}
             type="text"
             name="name"
             value={formData.name}
@@ -54,7 +62,6 @@ const AddEntity = () => {
         <label>
           X:
           <input
-            className={styles.input}
             type="number"
             name="x"
             value={formData.x}
@@ -66,7 +73,6 @@ const AddEntity = () => {
         <label>
           Y:
           <input
-            className={styles.input}
             type="number"
             name="y"
             value={formData.y}
@@ -78,7 +84,6 @@ const AddEntity = () => {
         <label>
           Level:
           <input
-            className={styles.input}
             type="number"
             name="lvl"
             value={formData.lvl}
@@ -90,7 +95,6 @@ const AddEntity = () => {
         <label>
           Alive:
           <input
-            className={styles.input}
             type="checkbox"
             name="alive"
             checked={formData.alive}
@@ -102,7 +106,6 @@ const AddEntity = () => {
         <label>
           Respawn Time:
           <input
-            className={styles.input}
             type="number"
             name="respawnTime"
             value={formData.respawnTime}
@@ -114,7 +117,6 @@ const AddEntity = () => {
         <label>
           Image:
           <input
-            className={styles.input}
             type="text"
             name="image"
             value={formData.image}
@@ -122,7 +124,6 @@ const AddEntity = () => {
           />
         </label>
         <br />
-
         <label>
           Type:
           <select
@@ -137,12 +138,13 @@ const AddEntity = () => {
         </label>
         <br />
 
-        <button className={styles.button} type="submit">
-          Submit
+        <button type="submit">Submit</button>
+        <button className={styles.btn_close} onClick={() => setIsOpen(false)}>
+          close
         </button>
       </form>
-    </div>
+    </Modal>
   );
 };
 
-export default AddEntity;
+export default EntityEditorAction;

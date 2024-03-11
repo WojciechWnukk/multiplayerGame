@@ -1,7 +1,6 @@
 import styles from "./styles.module.css";
 
 const ExpBarAction = ({ maxExp = 100, exp }) => {
-  console.log("EXXXXXXP, " + exp + " " + maxExp)
   const barWidth = (exp / maxExp) * 100;
   return (
     <div>
@@ -15,7 +14,8 @@ const ExpBarAction = ({ maxExp = 100, exp }) => {
             right: 0,
             textAlign: "center",
             fontSize: "12px",
-          }}>
+          }}
+        >
           {exp}%
         </div>
       </div>
@@ -26,7 +26,7 @@ const ExpBarAction = ({ maxExp = 100, exp }) => {
 export default function ExpBar({ exp }) {
   return (
     <div className={styles.App}>
-      <ExpBarAction exp = {exp} />
+      <ExpBarAction exp={exp} />
     </div>
   );
 }
