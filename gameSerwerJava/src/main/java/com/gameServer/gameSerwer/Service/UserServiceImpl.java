@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-        System.out.println("Dodaje nowego user" + user);
         registerValidation(user.getEmail(), user.getPassword(), user.getNick());
         return userrepository.save(user);
     }
@@ -107,12 +106,12 @@ public class UserServiceImpl implements UserService {
 
             if (optionalUser.isPresent() && optionalEntity.isPresent()) {
                 User userToUpdate = optionalUser.get();
-                int points = optionalEntity.get().getType().equals("monster") ? 10*optionalEntity.get().getLvl() : -10;
+                int points = optionalEntity.get().getType().equals("monster") ? 10 * optionalEntity.get().getLvl() : -10;
                 if (user.getHealth() - points < 0) {
                     respawnUser(userToUpdate);
                     userToUpdate.setAlive(true);
                     return ResponseEntity.ok().body(userToUpdate);
-                } else if(user.getHealth() - points > 100) {
+                } else if (user.getHealth() - points > 100) {
                     userToUpdate.setHealth(100);
                     userrepository.save(userToUpdate);
                     updateUserExp(user, entityId);
@@ -130,7 +129,7 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    //możnaby zrobić osobną metode do updatów gdzie to co zmieniamy przekazujemy jako argument i np switchem wybieramy co chcemy zrobić
     @Override
     public ResponseEntity<?> updateUserExp(User user, String entityId) {
         try {

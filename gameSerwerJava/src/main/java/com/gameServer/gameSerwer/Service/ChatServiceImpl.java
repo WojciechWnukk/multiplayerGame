@@ -15,12 +15,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void processChatMessage(String payload) {
-        System.out.println("chatting");
         try {
             JSONObject json = new JSONObject(payload);
-            String nick = json.getString("text");
-            String message = json.getString("author");
-
             messagingTemplate.convertAndSend("/topic/chat", payload);
         } catch (JSONException e) {
             e.printStackTrace();

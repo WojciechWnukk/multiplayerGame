@@ -43,7 +43,6 @@ public class EntitiesController {
                     .findFirst();
 
             if (existingEntity.isPresent()) {
-                System.out.println("Entity with this name already exists");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Entity with this name already exists");
             }
             User player = userService.getUserById(playerId).orElseThrow(() -> new Exception("Player not found"));
